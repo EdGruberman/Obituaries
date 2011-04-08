@@ -1,0 +1,4 @@
+name: SimpleDeathNotices
+main: edgruberman.bukkit.simpledeathnotices.Main
+version: %VERSION%
+author: EdGruberman (ed@rjump.com)
