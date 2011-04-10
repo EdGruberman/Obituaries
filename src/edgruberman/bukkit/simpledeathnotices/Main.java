@@ -51,7 +51,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
     
     public void describeEvent(EntityEvent event) {
         Entity damager = null;
-        String damagerName = null;
+        String damagerName = "";
         
         if (event instanceof EntityDamageByEntityEvent){
             damager = ((EntityDamageByEntityEvent) event).getDamager();
