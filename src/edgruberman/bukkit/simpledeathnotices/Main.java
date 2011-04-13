@@ -89,7 +89,6 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
             )
         ;
         
-        this.communicator.log(MessageLevel.EVENT.level, deathNotice);
         this.communicator.broadcastMessage(MessageLevel.EVENT, deathNotice);
     }
     

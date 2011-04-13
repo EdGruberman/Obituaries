@@ -24,6 +24,7 @@ public class Communicator {
     /**
      * Configures logging to display more or less than the default of INFO.</br>
      * <b>Known Bug:</b> Logging output to file in Minecraft does not include level prefix despite it displaying in the console.
+     * 
      * @param level Minimum logging level to show.
      */
     public void setLogLevel(Level level) {
@@ -112,6 +113,7 @@ public class Communicator {
         // Clarify private message by surrounding text with delimiters.
         message = "( " + message + " )";
         
+        this.log(level.level, "[MESSAGE:" + player.getName() + "] " + message);
         this.sendMessage(player, message, color);
     }
     
@@ -147,6 +149,7 @@ public class Communicator {
         // Disable user messages according to configuration.
         if (level.level.intValue() < this.messageLevel.intValue()) { return; }
         
+        this.log(level.level, "[BROADCAST] " + message);
         this.broadcastMessage(ChatColor.getByCode(level.color.getCode()), message);
     }
     
@@ -182,5 +185,4 @@ public class Communicator {
             this.level = level;
         }
     }
-    
 }
