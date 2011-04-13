@@ -166,10 +166,12 @@ public class Communicator {
      * Standardization for coloring of common messages.
      */
     public enum MessageLevel {
-          SEVERE (ChatColor.RED   , Level.SEVERE)
-        , WARNING(ChatColor.YELLOW, Level.WARNING)
-        , INFO   (ChatColor.WHITE , Level.INFO)
-        , DEATH  (ChatColor.GRAY  , Level.parse("750"))
+          SEVERE  (ChatColor.RED   , Level.SEVERE)
+        , WARNING (ChatColor.YELLOW, Level.WARNING)
+        , NOTICE  (ChatColor.BLUE  , Level.parse("850"))
+        , INFO    (ChatColor.WHITE , Level.INFO)
+        , STATUS  (ChatColor.GREEN , Level.parse("775"))
+        , EVENT   (ChatColor.GRAY  , Level.parse("750"))
         ;
 
         public ChatColor color;

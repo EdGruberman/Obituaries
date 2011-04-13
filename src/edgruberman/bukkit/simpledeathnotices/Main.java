@@ -19,7 +19,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
 
     public Communicator communicator = new Communicator(this);
     
-    private static final String DEFAULT_MESSAGE_LEVEL = Integer.toString(MessageLevel.DEATH.level.intValue());
+    private static final String DEFAULT_MESSAGE_LEVEL = Integer.toString(MessageLevel.EVENT.level.intValue());
 	
     public void onEnable() {
         this.communicator.log("Version " + this.getDescription().getVersion());
@@ -89,8 +89,8 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
             )
         ;
         
-        this.communicator.log(MessageLevel.DEATH.level, deathNotice);
-        this.communicator.broadcastMessage(MessageLevel.DEATH, deathNotice);
+        this.communicator.log(MessageLevel.EVENT.level, deathNotice);
+        this.communicator.broadcastMessage(MessageLevel.EVENT, deathNotice);
     }
     
     public String getCause(DamageCause damageCause) {
