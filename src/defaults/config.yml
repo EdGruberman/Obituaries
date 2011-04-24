@@ -1,4 +1,4 @@
-﻿timestamp: "HH:mm:ss"
+﻿timestamp: 'HH:mm:ss'
 format: "[%TIMESTAMP%] %VICTIM% died from %CAUSE%%KILLER%."
 logLevel: CONFIG
-messageLevel: 750
+sendLevel: EVENT

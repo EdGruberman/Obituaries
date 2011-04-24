@@ -2,7 +2,6 @@ package edgruberman.bukkit.simpledeathnotices;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -13,32 +12,38 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 
-import edgruberman.bukkit.simpledeathnotices.Communicator.MessageLevel;
+import edgruberman.bukkit.simpledeathnotices.MessageManager.MessageLevel;
 
 public class Main extends org.bukkit.plugin.java.JavaPlugin {
-
-    public Communicator communicator = new Communicator(this);
     
-    private static final String DEFAULT_MESSAGE_LEVEL = Integer.toString(MessageLevel.EVENT.level.intValue());
-	
+    private final String DEFAULT_LOG_LEVEL       = "CONFIG";
+    private final String DEFAULT_BROADCAST_LEVEL = "EVENT";
+
+    public static MessageManager messageManager = null;
+    	
     public void onEnable() {
-        this.communicator.log("Version " + this.getDescription().getVersion());
+        Main.messageManager = new MessageManager(this);
+        Main.messageManager.log("Version " + this.getDescription().getVersion());
         
         Configuration.load(this);
-        this.communicator.setLogLevel(Level.parse(this.getConfiguration().getString("logLevel", "CONFIG")));
-        this.communicator.setMessageLevel(Level.parse(this.getConfiguration().getString("messageLevel", DEFAULT_MESSAGE_LEVEL)));
-        this.communicator.log(Level.CONFIG,
+        Main.messageManager.setLogLevel(MessageLevel.parse(      this.getConfiguration().getString("logLevel",       this.DEFAULT_LOG_LEVEL)));
+        Main.messageManager.setBroadcastLevel(MessageLevel.parse(this.getConfiguration().getString("broadcastLevel", this.DEFAULT_BROADCAST_LEVEL)));
+ 
+        Main.messageManager.log(MessageLevel.CONFIG,
             "timestamp: " + this.getConfiguration().getString("timestamp")
             + "; format: " + this.getConfiguration().getString("format")
         );
         
         this.registerEvents();
         
-        this.communicator.log("Plugin Enabled");
+        Main.messageManager.log("Plugin Enabled");
     }
     
     public void onDisable() {
-        this.communicator.log("Plugin Disabled");
+        //TODO Unregister listeners when Bukkit supports it.
+        
+        Main.messageManager.log("Plugin Disabled");
+        Main.messageManager = null;
     }
     
     private void registerEvents() {
@@ -89,7 +94,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
             )
         ;
         
-        this.communicator.broadcastMessage(MessageLevel.EVENT, deathNotice);
+        Main.messageManager.broadcast(MessageLevel.EVENT, deathNotice);
     }
     
     public String getCause(DamageCause damageCause) {
