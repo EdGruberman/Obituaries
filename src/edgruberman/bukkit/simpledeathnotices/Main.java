@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
@@ -57,19 +59,22 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
     public void describeEvent(EntityEvent event) {
         Entity damager = null;
         String damagerName = "";
-        
         if (event instanceof EntityDamageByEntityEvent){
             damager = ((EntityDamageByEntityEvent) event).getDamager();
-            if (damager instanceof Player) {
-                damagerName = " " + ((Player) damager).getDisplayName();
-            } else {
-                String[] damagerClass = damager.getClass().getName().split("\\.");
-                damagerName = " a " + damagerClass[damagerClass.length - 1].substring("Craft".length());
-            }
+            if (!(damager instanceof Player)) damagerName = " a ";
+            damagerName = " " + this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
+        } else if (event instanceof EntityDamageByBlockEvent) {
+            damagerName = " " + ((EntityDamageByBlockEvent) event).getDamager().getType().toString().toLowerCase();
+        } else if (event instanceof EntityDamageByProjectileEvent) {
+            damager = ((EntityDamageByEntityEvent) event).getDamager();
+            if (!(damager instanceof Player)) damagerName = " a ";
+            damagerName = this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
+            damagerName += "'s " + this.getEntityName(((EntityDamageByProjectileEvent) event).getProjectile());
         }
         
         String deathCause;
         if (event instanceof EntityDeathEvent) {
+            // We don't know what the last damage this player received was, but they are dead now.
             deathCause = this.getCause(null);
         } else {
             deathCause = this.getCause(((EntityDamageEvent) event).getCause());
@@ -102,7 +107,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
         switch (damageCause) {
             case ENTITY_ATTACK:    deathCause = "being hit by";           break;
             case ENTITY_EXPLOSION: deathCause = "an explosion from";      break;
-            case CONTACT:          deathCause = "contact";                break;
+            case CONTACT:          deathCause = "contact with";           break;
             case SUFFOCATION:      deathCause = "suffocation";            break;
             case FALL:             deathCause = "falling";                break;
             case FIRE:             deathCause = "fire";                   break;
@@ -115,6 +120,20 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
             default:               deathCause = "something";              break;
         }
         return deathCause;
+    }
+    
+    private String getEntityName(Entity entity) {
+        Main.messageManager.log(MessageLevel.FINEST, "Entity Class: " + entity.getClass().getName());
+        
+        // For players, use their current display name.
+        if (entity instanceof Player)
+            return ((Player) entity).getDisplayName();
+
+        // For entities, use their class name stripping Craft from the front.
+        String[] damagerClass = entity.getClass().getName().split("\\.");
+        String name = damagerClass[damagerClass.length - 1].substring("Craft".length());
+        if (name.equals("TNTPrimed")) name = "TNT";
+        return name;
     }
 
 }
