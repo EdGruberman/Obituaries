@@ -69,7 +69,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
         } else if (event instanceof EntityDamageByEntityEvent) {
             damager = ((EntityDamageByEntityEvent) event).getDamager();
             if (!(damager instanceof Player)) damagerName = " a ";
-            damagerName += " " + this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
+            damagerName += this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
         }
         
         String deathCause;
