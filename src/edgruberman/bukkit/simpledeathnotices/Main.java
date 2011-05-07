@@ -59,17 +59,17 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
     public void describeEvent(EntityEvent event) {
         Entity damager = null;
         String damagerName = "";
-        if (event instanceof EntityDamageByEntityEvent){
-            damager = ((EntityDamageByEntityEvent) event).getDamager();
-            if (!(damager instanceof Player)) damagerName = " a ";
-            damagerName += " " + this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
-        } else if (event instanceof EntityDamageByBlockEvent) {
+        if (event instanceof EntityDamageByBlockEvent) {
             damagerName = " " + ((EntityDamageByBlockEvent) event).getDamager().getType().toString().toLowerCase();
         } else if (event instanceof EntityDamageByProjectileEvent) {
             damager = ((EntityDamageByEntityEvent) event).getDamager();
             if (!(damager instanceof Player)) damagerName = " a ";
             damagerName += this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
             damagerName += "'s " + this.getEntityName(((EntityDamageByProjectileEvent) event).getProjectile());
+        } else if (event instanceof EntityDamageByEntityEvent) {
+            damager = ((EntityDamageByEntityEvent) event).getDamager();
+            if (!(damager instanceof Player)) damagerName = " a ";
+            damagerName += " " + this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
         }
         
         String deathCause;
