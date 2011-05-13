@@ -1,8 +1,5 @@
 package edgruberman.bukkit.simpledeathnotices;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,26 +11,23 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 
-import edgruberman.bukkit.simpledeathnotices.MessageManager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageLevel;
+import edgruberman.bukkit.messagemanager.MessageManager;
 
 public class Main extends org.bukkit.plugin.java.JavaPlugin {
-    
-    private final String DEFAULT_LOG_LEVEL       = "CONFIG";
-    private final String DEFAULT_BROADCAST_LEVEL = "EVENT";
 
     public static MessageManager messageManager = null;
-    	
+    
+    public void onLoad() {
+        Configuration.load(this);
+    }
+    
     public void onEnable() {
         Main.messageManager = new MessageManager(this);
         Main.messageManager.log("Version " + this.getDescription().getVersion());
-        
-        Configuration.load(this);
-        Main.messageManager.setLogLevel(MessageLevel.parse(      this.getConfiguration().getString("logLevel",       this.DEFAULT_LOG_LEVEL)));
-        Main.messageManager.setBroadcastLevel(MessageLevel.parse(this.getConfiguration().getString("broadcastLevel", this.DEFAULT_BROADCAST_LEVEL)));
  
-        Main.messageManager.log(MessageLevel.CONFIG,
-            "timestamp: " + this.getConfiguration().getString("timestamp")
-            + "; format: " + this.getConfiguration().getString("format")
+        Main.messageManager.log(MessageLevel.CONFIG
+                , "format: " + this.getConfiguration().getString("format")
         );
         
         this.registerEvents();
@@ -80,24 +74,11 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
             deathCause = this.getCause(((EntityDamageEvent) event).getCause());
         }
         
-        String deathNotice = this.getConfiguration().getString("format")
-            .replace(
-                  "%TIMESTAMP%"
-                , (new SimpleDateFormat(this.getConfiguration().getString("timestamp")).format(new Date()))
-            )
-            .replace(
-                  "%VICTIM%"
+        String deathNotice = String.format(this.getConfiguration().getString("format")
                 , ((Player) event.getEntity()).getDisplayName()
-            )
-            .replace(
-                  "%CAUSE%"
                 , deathCause
-            )
-            .replace(
-                  "%KILLER%"
                 , damagerName
-            )
-        ;
+        );
         
         Main.messageManager.broadcast(MessageLevel.EVENT, deathNotice);
     }

@@ -1,4 +1,4 @@
-﻿timestamp: 'HH:mm:ss'
-format: "[%TIMESTAMP%] %VICTIM% died from %CAUSE%%KILLER%."
-logLevel: CONFIG
-sendLevel: EVENT
+format: '%1$s died from %2$s%3$s.' # 1 = Victim, 2 = Death Cause, 3 = Killer
+level:
+    log: CONFIG
+    send: EVENT
