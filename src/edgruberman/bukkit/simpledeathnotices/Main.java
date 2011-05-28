@@ -1,5 +1,6 @@
 package edgruberman.bukkit.simpledeathnotices;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -54,7 +55,8 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
         Entity damager = null;
         String damagerName = "";
         if (event instanceof EntityDamageByBlockEvent) {
-            damagerName = " " + ((EntityDamageByBlockEvent) event).getDamager().getType().toString().toLowerCase();
+            Block block = ((EntityDamageByBlockEvent) event).getDamager();
+            if (block != null) damagerName = " " + block.getType().toString().toLowerCase();
         } else if (event instanceof EntityDamageByProjectileEvent) {
             damager = ((EntityDamageByEntityEvent) event).getDamager();
             if (!(damager instanceof Player)) damagerName = " a ";
