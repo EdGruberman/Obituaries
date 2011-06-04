@@ -16,7 +16,7 @@ import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
 
 public class Main extends org.bukkit.plugin.java.JavaPlugin {
-
+    
     public static MessageManager messageManager = null;
     
     public void onLoad() {
@@ -86,6 +86,8 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
     }
     
     public String getCause(DamageCause damageCause) {
+        if (damageCause == null) return "nothing";
+        
         String deathCause;
         switch (damageCause) {
             case ENTITY_ATTACK:    deathCause = "being hit by";           break;
