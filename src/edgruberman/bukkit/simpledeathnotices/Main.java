@@ -3,7 +3,6 @@ package edgruberman.bukkit.simpledeathnotices;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -15,40 +14,29 @@ import org.bukkit.event.entity.EntityEvent;
 import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
 
-public class Main extends org.bukkit.plugin.java.JavaPlugin {
+public final class Main extends org.bukkit.plugin.java.JavaPlugin {
     
-    public static MessageManager messageManager = null;
+    static ConfigurationFile configurationFile;
+    static MessageManager messageManager;
     
     public void onLoad() {
-        Configuration.load(this);
+        Main.configurationFile = new ConfigurationFile(this);
+        Main.configurationFile.load();
+        
+        Main.messageManager = new MessageManager(this);
+        Main.messageManager.log("Version " + this.getDescription().getVersion());
     }
     
     public void onEnable() {
-        Main.messageManager = new MessageManager(this);
-        Main.messageManager.log("Version " + this.getDescription().getVersion());
- 
-        Main.messageManager.log(MessageLevel.CONFIG
-                , "format: " + this.getConfiguration().getString("format")
-        );
+        Main.messageManager.log("format: " + this.getConfiguration().getString("format"), MessageLevel.CONFIG);
         
-        this.registerEvents();
+        new EntityListener(this);
         
         Main.messageManager.log("Plugin Enabled");
     }
     
     public void onDisable() {
-        //TODO Unregister listeners when Bukkit supports it.
-        
         Main.messageManager.log("Plugin Disabled");
-        Main.messageManager = null;
-    }
-    
-    private void registerEvents() {
-        EntityListener entityListener = new EntityListener(this);
-        
-        org.bukkit.plugin.PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Monitor, this);
-        pluginManager.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Event.Priority.Monitor, this);
     }
     
     public void describeEvent(EntityEvent event) {
@@ -82,7 +70,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
                 , damagerName
         );
         
-        Main.messageManager.broadcast(MessageLevel.EVENT, deathNotice);
+        Main.messageManager.broadcast(deathNotice, MessageLevel.EVENT);
     }
     
     public String getCause(DamageCause damageCause) {
@@ -108,7 +96,7 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
     }
     
     private String getEntityName(Entity entity) {
-        Main.messageManager.log(MessageLevel.FINEST, "Entity Class: " + entity.getClass().getName());
+        Main.messageManager.log("Entity Class: " + entity.getClass().getName(), MessageLevel.FINEST);
         
         // For players, use their current display name.
         if (entity instanceof Player)
@@ -120,5 +108,4 @@ public class Main extends org.bukkit.plugin.java.JavaPlugin {
         if (name.equals("TNTPrimed")) name = "TNT";
         return name;
     }
-
 }
