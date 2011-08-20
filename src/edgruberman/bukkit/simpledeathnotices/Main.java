@@ -1,15 +1,8 @@
 package edgruberman.bukkit.simpledeathnotices;
 
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
+import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.util.config.Configuration;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
@@ -20,17 +13,15 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
     static MessageManager messageManager;
     
     public void onLoad() {
-        Main.configurationFile = new ConfigurationFile(this);
-        Main.configurationFile.load();
-        
         Main.messageManager = new MessageManager(this);
         Main.messageManager.log("Version " + this.getDescription().getVersion());
+        
+        Main.configurationFile = new ConfigurationFile(this);
+        this.loadConfiguration();
     }
     
     public void onEnable() {
-        Main.messageManager.log("format: " + this.getConfiguration().getString("format"), MessageLevel.CONFIG);
-        
-        new EntityListener(this);
+        new DeathMonitor(this);
         
         Main.messageManager.log("Plugin Enabled");
     }
@@ -39,73 +30,40 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
         Main.messageManager.log("Plugin Disabled");
     }
     
-    public void describeEvent(EntityEvent event) {
-        Entity damager = null;
-        String damagerName = "";
-        if (event instanceof EntityDamageByBlockEvent) {
-            Block block = ((EntityDamageByBlockEvent) event).getDamager();
-            if (block != null) damagerName = " " + block.getType().toString().toLowerCase();
-        } else if (event instanceof EntityDamageByProjectileEvent) {
-            damager = ((EntityDamageByEntityEvent) event).getDamager();
-            if (!(damager instanceof Player)) damagerName = " a ";
-            damagerName += this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
-            damagerName += "'s " + this.getEntityName(((EntityDamageByProjectileEvent) event).getProjectile());
-        } else if (event instanceof EntityDamageByEntityEvent) {
-            damager = ((EntityDamageByEntityEvent) event).getDamager();
-            if (!(damager instanceof Player)) damagerName = " a";
-            damagerName += " " + this.getEntityName(((EntityDamageByEntityEvent) event).getDamager());
+    private void loadConfiguration() {
+        Configuration cfg = Main.configurationFile.getConfiguration();
+        
+        // Load default format.
+        DeathMonitor.causeFormats.put(null, cfg.getString("default", DeathMonitor.DEFAULT_FORMAT));
+        
+        // Load damage cause specific formats.
+        for (String name: cfg.getKeys("DamageCause")) {
+            DamageCause cause = DamageCause.valueOf(name);
+            if (cause == null) continue;
+            
+            DeathMonitor.causeFormats.put(cause, cfg.getString("DamageCause." + cause.name(), DeathMonitor.DEFAULT_FORMAT));
+            Main.messageManager.log("DamageCause Format for " + cause.name() + ": " + DeathMonitor.causeFormats.get(cause), MessageLevel.CONFIG);
         }
-        
-        String deathCause;
-        if (event instanceof EntityDeathEvent) {
-            // We don't know what the last damage this player received was, but they are dead now.
-            deathCause = this.getCause(null);
-        } else {
-            deathCause = this.getCause(((EntityDamageEvent) event).getCause());
-        }
-        
-        String deathNotice = String.format(this.getConfiguration().getString("format")
-                , ((Player) event.getEntity()).getDisplayName()
-                , deathCause
-                , damagerName
-        );
-        
-        Main.messageManager.broadcast(deathNotice, MessageLevel.EVENT);
-    }
-    
-    public String getCause(DamageCause damageCause) {
-        if (damageCause == null) return "nothing";
-        
-        String deathCause;
-        switch (damageCause) {
-            case ENTITY_ATTACK:    deathCause = "being hit by";           break;
-            case ENTITY_EXPLOSION: deathCause = "an explosion from";      break;
-            case CONTACT:          deathCause = "contact with";           break;
-            case SUFFOCATION:      deathCause = "suffocation";            break;
-            case FALL:             deathCause = "falling";                break;
-            case FIRE:             deathCause = "fire";                   break;
-            case FIRE_TICK:        deathCause = "burning";                break;
-            case LAVA:             deathCause = "lava";                   break;
-            case DROWNING:         deathCause = "drowning";               break;
-            case BLOCK_EXPLOSION:  deathCause = "an explosion";           break;
-            case VOID:             deathCause = "falling in to the void"; break;
-            case CUSTOM:           deathCause = "something custom";       break;
-            default:               deathCause = "something";              break;
-        }
-        return deathCause;
-    }
-    
-    private String getEntityName(Entity entity) {
-        Main.messageManager.log("Entity Class: " + entity.getClass().getName(), MessageLevel.FINEST);
-        
-        // For players, use their current display name.
-        if (entity instanceof Player)
-            return ((Player) entity).getDisplayName();
 
-        // For entities, use their class name stripping Craft from the front.
-        String[] damagerClass = entity.getClass().getName().split("\\.");
-        String name = damagerClass[damagerClass.length - 1].substring("Craft".length());
-        if (name.equals("TNTPrimed")) name = "TNT";
-        return name;
+        // Entity
+        for (String name: cfg.getKeys("Entity")) {
+            DeathMonitor.entityNames.put(name, cfg.getString("Entity." + name, name.toLowerCase()));
+            Main.messageManager.log("Entity Name for " + name + ": " + DeathMonitor.entityNames.get(name), MessageLevel.CONFIG);
+        }
+        
+        // owners
+        for (String name: cfg.getKeys("owners")) {
+            DeathMonitor.ownerFormats.put(name, cfg.getString("owners." + name));
+            Main.messageManager.log("Owner Format for" + name + ": " + DeathMonitor.ownerFormats.get(name), MessageLevel.CONFIG);
+        }
+        
+        // Material
+        for (String name: cfg.getKeys("Material")) {
+            Material material = Material.valueOf(name);
+            if (material == null) continue;
+            
+            DeathMonitor.materialNames.put(material, cfg.getString("Material." + material.name(), material.name().toLowerCase()));
+            Main.messageManager.log("Material Name for " + material.name() + ": " + DeathMonitor.materialNames.get(material), MessageLevel.CONFIG);
+        }
     }
 }

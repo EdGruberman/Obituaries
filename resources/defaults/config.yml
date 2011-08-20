@@ -1,4 +1,49 @@
-format: '%1$s died from %2$s%3$s.' # 1 = Victim, 2 = Death Cause, 3 = Killer
-level:
-    log: CONFIG
-    send: EVENT
+default: '%1$s died.'
+DamageCause:
+    ENTITY_ATTACK: '%1$s died from being attacked by %2$s.'
+    PROJECTILE: '%1$s died from being hit by %2$s.'
+    ENTITY_EXPLOSION: '%1$s died in an explosion from %2$s.'
+    BLOCK_EXPLOSION: '%1$s died in an explosion of %2$s.'
+    CONTACT: '%1$s died from contact with %2$s.'
+    SUFFOCATION: '%1$s died from suffocation %2$s.'
+    LIGHTNING: '%1$s died from being struck by %2$s.'
+    SUICIDE: '%1$s committed suicide.'
+    FALL: '%1$s died from falling.'
+    FIRE: '%1$s died in fire.'
+    FIRE_TICK: '%1$s died from burning.'
+    LAVA: '%1$s died in lava.'
+    DROWNING: '%1$s died from drowning.'
+    VOID: '%1$s died from falling in to the void.'
+    CUSTOM: '%1$s died from something.'
+Entity:
+    Chicken: a chicken
+    Cow: a cow
+    Creeper: a creeper
+    Ghast: a ghast
+    Giant: a giant
+    PigZombie: a pig zombie
+    Sheep: a sheep
+    Skeleton: a skeleton
+    Slime: a slime
+    Spider: a spider
+    Squid: a squid
+    Zombie: a zombie
+    TNTPrimed: TNT
+    PoweredMinecart: a powered minecart
+    StorageMinecart: a storage minecart
+    LightningStrike: a lightning strike
+    Pig: a pig
+    Wolf: a wolf
+    Arrow: an arrow
+    Egg: an egg
+    Fireball: a fireball
+    Fish: a fish
+    Snowball: a snowball
+    Boat: a boat
+    Minecart: a minecart
+owners:
+    Projectile: '%1$s shot by %2$s'
+    Tameable: '%1$s tamed by %2$s'
+    Vehicle: '%1$s ridden by %2$s'
+Material:
+    CACTUS: cactus
