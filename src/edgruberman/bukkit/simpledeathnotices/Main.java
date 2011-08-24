@@ -34,6 +34,7 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
         Configuration cfg = Main.configurationFile.getConfiguration();
         
         // Load default format.
+        DeathMonitor.causeFormats.clear();
         DeathMonitor.causeFormats.put(null, cfg.getString("default", DeathMonitor.DEFAULT_FORMAT));
         
         // Load damage cause specific formats.
@@ -42,28 +43,39 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
             if (cause == null) continue;
             
             DeathMonitor.causeFormats.put(cause, cfg.getString("DamageCause." + cause.name(), DeathMonitor.DEFAULT_FORMAT));
-            Main.messageManager.log("DamageCause Format for " + cause.name() + ": " + DeathMonitor.causeFormats.get(cause), MessageLevel.CONFIG);
         }
-
-        // Entity
-        for (String name: cfg.getKeys("Entity")) {
-            DeathMonitor.entityNames.put(name, cfg.getString("Entity." + name, name.toLowerCase()));
-            Main.messageManager.log("Entity Name for " + name + ": " + DeathMonitor.entityNames.get(name), MessageLevel.CONFIG);
-        }
+        Main.messageManager.log(DeathMonitor.causeFormats.size() + " cause formats loaded.", MessageLevel.CONFIG);
+        
+        // weapon
+        DeathMonitor.weaponFormat = cfg.getString("weapon", DeathMonitor.DEFAULT_WEAPON_FORMAT);
+        Main.messageManager.log("Weapon Format: " + DeathMonitor.weaponFormat, MessageLevel.CONFIG);
+        
+        // hand
+        DeathMonitor.weaponFormat = cfg.getString("hand", DeathMonitor.DEFAULT_HAND);
+        Main.messageManager.log("Hand: " + DeathMonitor.hand, MessageLevel.CONFIG);
         
         // owners
+        DeathMonitor.ownerFormats.clear();
         for (String name: cfg.getKeys("owners")) {
             DeathMonitor.ownerFormats.put(name, cfg.getString("owners." + name));
             Main.messageManager.log("Owner Format for" + name + ": " + DeathMonitor.ownerFormats.get(name), MessageLevel.CONFIG);
         }
+
+        // Entity
+        DeathMonitor.entityNames.clear();
+        for (String name: cfg.getKeys("Entity"))
+            DeathMonitor.entityNames.put(name, cfg.getString("Entity." + name, name.toLowerCase()));
+        
+        Main.messageManager.log(DeathMonitor.entityNames.size() + " entity names loaded.", MessageLevel.CONFIG);
         
         // Material
+        DeathMonitor.materialNames.clear();
         for (String name: cfg.getKeys("Material")) {
             Material material = Material.valueOf(name);
             if (material == null) continue;
             
             DeathMonitor.materialNames.put(material, cfg.getString("Material." + material.name(), material.name().toLowerCase()));
-            Main.messageManager.log("Material Name for " + material.name() + ": " + DeathMonitor.materialNames.get(material), MessageLevel.CONFIG);
         }
+        Main.messageManager.log(DeathMonitor.materialNames.size() + " material names loaded.", MessageLevel.CONFIG);
     }
 }

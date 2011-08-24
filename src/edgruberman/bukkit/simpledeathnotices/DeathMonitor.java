@@ -25,11 +25,15 @@ import edgruberman.bukkit.messagemanager.MessageLevel;
 final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
     
     static final String DEFAULT_FORMAT = "%1$s died."; // 1 = Victim, 2 = Killer
+    static final String DEFAULT_WEAPON_FORMAT = "%1$s with %2$s"; // 1 = Killer, 2 = Weapon
+    static final String DEFAULT_HAND = "a bare fist";
     
     static Map<DamageCause, String> causeFormats = new HashMap<DamageCause, String>();
     static Map<String, String> entityNames = new HashMap<String, String>();
     static Map<String, String> ownerFormats = new HashMap<String, String>();
     static Map<Material, String> materialNames = new HashMap<Material, String>();
+    static String weaponFormat = DeathMonitor.DEFAULT_WEAPON_FORMAT;
+    static String hand = DeathMonitor.DEFAULT_HAND;
     
     private Map<Entity, EntityDamageEvent> lastDamage = new HashMap<Entity, EntityDamageEvent>();
     
@@ -64,29 +68,45 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
         String description = null;
         
         if (event instanceof EntityDamageByEntityEvent) {
+            // Entity description.
             Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
             description = DeathMonitor.describeEntity(damager);
             
         } else if (event instanceof EntityDamageByBlockEvent) {
+            // Block material name.
             Block block = ((EntityDamageByBlockEvent) event).getDamager();
             if (block != null) {
                 description = DeathMonitor.materialNames.get(block.getType());
                 if (description == null) description = block.getType().toString().toLowerCase();
             }
             
+        } else if (event.getCause() == DamageCause.FALL) {
+            // Falling distance.
+            description = Integer.toString(event.getDamage() + 3);
         }
         
         return description;
     }
     
     private static String describeEntity(final Entity entity) {
+        String description = null;
+        
         // For players, use their current display name.
-        if (entity instanceof Player)
-            return ((Player) entity).getDisplayName();
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            if (DeathMonitor.weaponFormat != null) {
+                String weapon = DeathMonitor.materialNames.get(player.getItemInHand().getType());
+                if (weapon == null) weapon = DeathMonitor.hand;
+                description = String.format(DeathMonitor.weaponFormat, player.getDisplayName(), weapon);
+            } else {
+                description = player.getDisplayName();
+            }
+            return description;
+        }
         
         // For other entities, use their class name stripping Craft from the front.
         String[] entityClass = entity.getClass().getName().split("\\.");
-        String description = entityClass[entityClass.length - 1].substring("Craft".length());
+        description = entityClass[entityClass.length - 1].substring("Craft".length());
         
         // Override with localization if specified in configuration.
         if (DeathMonitor.entityNames.containsKey(description))

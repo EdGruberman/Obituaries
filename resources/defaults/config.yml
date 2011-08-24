@@ -1,20 +1,26 @@
 default: '%1$s died.'
 DamageCause:
-    ENTITY_ATTACK: '%1$s died from being attacked by %2$s.'
+    ENTITY_ATTACK: '%1$s was killed by %2$s.'
     PROJECTILE: '%1$s died from being hit by %2$s.'
     ENTITY_EXPLOSION: '%1$s died in an explosion from %2$s.'
     BLOCK_EXPLOSION: '%1$s died in an explosion of %2$s.'
     CONTACT: '%1$s died from contact with %2$s.'
     SUFFOCATION: '%1$s died from suffocation %2$s.'
     LIGHTNING: '%1$s died from being struck by %2$s.'
+    FALL: '%1$s died from falling %2$s blocks.'
     SUICIDE: '%1$s committed suicide.'
-    FALL: '%1$s died from falling.'
     FIRE: '%1$s died in fire.'
     FIRE_TICK: '%1$s died from burning.'
     LAVA: '%1$s died in lava.'
     DROWNING: '%1$s died from drowning.'
     VOID: '%1$s died from falling in to the void.'
     CUSTOM: '%1$s died from something.'
+weapon: '$1$s with %2$s'
+hand: 'a bare fist'
+owners:
+    Projectile: '%1$s shot by %2$s'
+    Tameable: '%1$s tamed by %2$s'
+    Vehicle: '%1$s ridden by %2$s'
 Entity:
     Chicken: a chicken
     Cow: a cow
@@ -41,9 +47,207 @@ Entity:
     Snowball: a snowball
     Boat: a boat
     Minecart: a minecart
-owners:
-    Projectile: '%1$s shot by %2$s'
-    Tameable: '%1$s tamed by %2$s'
-    Vehicle: '%1$s ridden by %2$s'
 Material:
+    AIR: air
+    STONE: stone
+    GRASS: grass
+    DIRT: dirt
+    COBBLESTONE: cobblestone 
+    WOOD: wood
+    SAPLING: sapling
+    BEDROCK: bedrock
+    WATER: water
+    STATIONARY_WATER: water 
+    LAVA: lava
+    STATIONARY_LAVA: lava 
+    SAND: sand
+    GRAVEL: gravel
+    GOLD_ORE: gold ore
+    IRON_ORE: iron ore
+    COAL_ORE: coal ore
+    LOG: a log
+    LEAVES: leaves
+    SPONGE: a sponge
+    GLASS: glass
+    LAPIS_ORE: lapis lazuli ore
+    LAPIS_BLOCK: a lapis lazuli block
+    DISPENSER: a dispenser
+    SANDSTONE: sandstone
+    NOTE_BLOCK: a note block
+    BED_BLOCK: a bed
+    POWERED_RAIL: a powered rail
+    DETECTOR_RAIL: a detector rail
+    PISTON_STICKY_BASE: a piston sticky base 
+    WEB: a web
+    LONG_GRASS: long grass 
+    DEAD_BUSH: a dead bush
+    PISTON_BASE: a piston base
+    PISTON_EXTENSION: a piston extension
+    WOOL: wool
+    PISTON_MOVING_PIECE: a piston moving piece 
+    YELLOW_FLOWER: a yellow flower
+    RED_ROSE: a red rose
+    BROWN_MUSHROOM: a brown mushroom
+    RED_MUSHROOM: a red mushroom
+    GOLD_BLOCK: a gold block
+    IRON_BLOCK: an iron block
+    DOUBLE_STEP: a double slab
+    STEP: a slab
+    BRICK: brick
+    TNT: TNT
+    BOOKSHELF: a bookshelf 
+    MOSSY_COBBLESTONE: mossy cobblestone
+    OBSIDIAN: obsidian
+    TORCH: a torch
+    FIRE: fire
+    MOB_SPAWNER: a mob spawner 
+    WOOD_STAIRS: wood stairs
+    CHEST: a chest
+    REDSTONE_WIRE: a redstone wire
+    DIAMOND_ORE: diamond ore
+    DIAMOND_BLOCK: a diamond block
+    WORKBENCH: a crafting bench
+    CROPS: crops
+    SOIL: soil
+    FURNACE: a furnace
+    BURNING_FURNACE: a burning furnace
+    SIGN_POST: a sign post
+    WOODEN_DOOR: a wood door
+    LADDER: a ladder
+    RAILS: rails
+    COBBLESTONE_STAIRS: cobblestone stairs 
+    WALL_SIGN: a wall sign
+    LEVER: a lever
+    STONE_PLATE: a stone pressure plate
+    IRON_DOOR_BLOCK: an iron door
+    WOOD_PLATE: a wood pressure plate
+    REDSTONE_ORE: redstone ore
+    GLOWING_REDSTONE_ORE: glowing redstone ore
+    REDSTONE_TORCH_OFF: a redstone torch
+    REDSTONE_TORCH_ON: a redstone torch
+    STONE_BUTTON: a stone button
+    SNOW: snow
+    ICE: ice
+    SNOW_BLOCK: a snow block 
     CACTUS: cactus
+    CLAY: clay
+    SUGAR_CANE_BLOCK: a sugar cane block 
+    JUKEBOX: a jukebox
+    FENCE: a fence
+    PUMPKIN: a pumpkin
+    NETHERRACK: netherrack
+    SOUL_SAND: soul sand
+    GLOWSTONE: glowstone
+    PORTAL: a portal
+    JACK_O_LANTERN: a jack o' lantern
+    CAKE_BLOCK: a cake block
+    DIODE_BLOCK_OFF: a diode block
+    DIODE_BLOCK_ON: a diode block
+    LOCKED_CHEST: a locked chest
+    TRAP_DOOR: a trap door
+    IRON_SPADE: an iron shovel
+    IRON_PICKAXE: an iron pickaxe
+    IRON_AXE: an iron axe
+    FLINT_AND_STEEL: flint and steel
+    APPLE: an apple
+    BOW: a bow
+    ARROW: an arrow
+    COAL: coal
+    DIAMOND: diamond
+    IRON_INGOT: an iron ingot
+    GOLD_INGOT: a gold ingot
+    IRON_SWORD: an iron sword
+    WOOD_SWORD: a wood sword
+    WOOD_SPADE: a wood shovel
+    WOOD_PICKAXE: a wood pickaxe
+    WOOD_AXE: a wood axe
+    STONE_SWORD: a stone sword
+    STONE_SPADE: a stone shovel
+    STONE_PICKAXE: a stone pickaxe
+    STONE_AXE: a stone axe
+    DIAMOND_SWORD: a diamond sword
+    DIAMOND_SPADE: a diamond shovel
+    DIAMOND_PICKAXE: a diamond pickaxe
+    DIAMOND_AXE: a diamond axe
+    STICK: a stick
+    BOWL: a bowl
+    MUSHROOM_SOUP: mushroom soup
+    GOLD_SWORD: a gold sword
+    GOLD_SPADE: a gold shovel
+    GOLD_PICKAXE: a gold pickaxe
+    GOLD_AXE: a gold axe
+    STRING: string
+    FEATHER: a feather
+    SULPHUR: gunpowder
+    WOOD_HOE: a wood hoe
+    STONE_HOE: a stone hoe
+    IRON_HOE: an iron hoe
+    DIAMOND_HOE: a diamond hoe
+    GOLD_HOE: a gold hoe
+    SEEDS: seeds
+    WHEAT: wheat
+    BREAD: bread
+    LEATHER_HELMET: a leather helmet
+    LEATHER_CHESTPLATE: a leather chestplate
+    LEATHER_LEGGINGS: leather leggings
+    LEATHER_BOOTS: leather boots
+    CHAINMAIL_HELMET: a chainmail helmet
+    CHAINMAIL_CHESTPLATE: a chainmail chestplate
+    CHAINMAIL_LEGGINGS: chainmail leggings
+    CHAINMAIL_BOOTS: chainmail boots
+    IRON_HELMET: an iron helmet
+    IRON_CHESTPLATE: an iron chestplate
+    IRON_LEGGINGS: iron leggings
+    IRON_BOOTS: iron boots
+    DIAMOND_HELMET: a diamond helmet
+    DIAMOND_CHESTPLATE: a diamond chestplate
+    DIAMOND_LEGGINGS: diamond leggings
+    DIAMOND_BOOTS: diamond boots
+    GOLD_HELMET: a gold helmet
+    GOLD_CHESTPLATE: a gold chestplate
+    GOLD_LEGGINGS: gold leggings
+    GOLD_BOOTS: gold boots
+    FLINT: flint
+    PORK: pork
+    GRILLED_PORK: grilled pork 
+    PAINTING: a painting
+    GOLDEN_APPLE: a golden apple
+    SIGN: a sign
+    WOOD_DOOR: a wood door
+    BUCKET: a bucket
+    WATER_BUCKET: a water bucket
+    LAVA_BUCKET: a lava bucket
+    MINECART: a minecart
+    SADDLE: a saddle
+    IRON_DOOR: an iron door
+    REDSTONE: redstone dust
+    SNOW_BALL: a snow ball
+    BOAT: a boat
+    LEATHER: leather
+    MILK_BUCKET: a milk bucket
+    CLAY_BRICK: a clay brick
+    CLAY_BALL: a clay ball
+    SUGAR_CANE: a sugar cane
+    PAPER: paper
+    BOOK: a book
+    SLIME_BALL: a slime ball
+    STORAGE_MINECART: a storage minecart
+    POWERED_MINECART: a powered minecart
+    EGG: an egg
+    COMPASS: a compass
+    FISHING_ROD: a fishing rod
+    WATCH: a clock
+    GLOWSTONE_DUST: glowstone dust
+    RAW_FISH: a raw fish
+    COOKED_FISH: a cooked fish
+    INK_SACK: an ink sac
+    BONE: a bone
+    SUGAR: sugar
+    CAKE: a cake
+    BED: a bed
+    DIODE: a diode
+    COOKIE: a cookie
+    MAP: a map 
+    SHEARS: shears
+    GOLD_RECORD: a gold record
+    GREEN_RECORD: a green record
