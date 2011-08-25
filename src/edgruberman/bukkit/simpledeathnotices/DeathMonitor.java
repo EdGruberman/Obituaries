@@ -80,9 +80,14 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
                 if (description == null) description = block.getType().toString().toLowerCase();
             }
             
+        } else if (event.getCause() == DamageCause.SUFFOCATION) {
+            // Suffocating material.
+            description = DeathMonitor.materialNames.get(((Player) event.getEntity()).getEyeLocation().getBlock().getType());
+            
         } else if (event.getCause() == DamageCause.FALL) {
             // Falling distance.
             description = Integer.toString(event.getDamage() + 3);
+            
         }
         
         return description;

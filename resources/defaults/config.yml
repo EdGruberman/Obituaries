@@ -5,7 +5,7 @@ DamageCause:
     ENTITY_EXPLOSION: '%1$s died in an explosion from %2$s.'
     BLOCK_EXPLOSION: '%1$s died in an explosion of %2$s.'
     CONTACT: '%1$s died from contact with %2$s.'
-    SUFFOCATION: '%1$s died from suffocation %2$s.'
+    SUFFOCATION: '%1$s died from suffocating in %2$s.'
     LIGHTNING: '%1$s died from being struck by %2$s.'
     FALL: '%1$s died from falling %2$s blocks.'
     SUICIDE: '%1$s committed suicide.'
