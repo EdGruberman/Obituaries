@@ -126,9 +126,16 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
         }
         
         if (entity instanceof Projectile) {
-            LivingEntity shooter = ((Projectile) entity).getShooter();
-            if (shooter instanceof Entity && DeathMonitor.ownerFormats.containsKey("Projectile"))
-                description = String.format(DeathMonitor.ownerFormats.get("Projectile"), description, DeathMonitor.describeEntity(shooter));
+            if (DeathMonitor.ownerFormats.containsKey("Projectile")) {
+                LivingEntity shooter = ((Projectile) entity).getShooter();
+                String shooterName = null;
+                if (shooter == null) {
+                    shooterName = DeathMonitor.materialNames.get(Material.DISPENSER);
+                } else if (shooter instanceof Entity) {
+                    shooterName = DeathMonitor.describeEntity(shooter);
+                }
+                description = String.format(DeathMonitor.ownerFormats.get("Projectile"), description, shooterName);
+            }
         }
         
         if (entity instanceof Vehicle) {
