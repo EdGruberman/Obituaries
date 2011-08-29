@@ -2,6 +2,7 @@ package edgruberman.bukkit.simpledeathnotices;
 
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.config.Configuration;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
@@ -27,6 +28,8 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
     }
     
     public void onDisable() {
+        DamageReport.last.clear();
+        
         Main.messageManager.log("Plugin Disabled");
     }
     
@@ -77,5 +80,14 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
             DeathMonitor.materialNames.put(material, cfg.getString("Material." + material.name(), material.name().toLowerCase()));
         }
         Main.messageManager.log(DeathMonitor.materialNames.size() + " material names loaded.", MessageLevel.CONFIG);
+        
+        // MaterialData
+        DeathMonitor.materialDataNames.clear();
+        for (String entry: cfg.getKeys("MaterialData")) {
+            Material material = Material.valueOf(entry.split(":")[0]);
+            Byte data = Byte.parseByte(entry.split(":")[1]);
+            DeathMonitor.materialDataNames.put(new MaterialData(material, data), cfg.getString("MaterialData." + entry));
+        }
+        Main.messageManager.log(DeathMonitor.materialDataNames.size() + " material data names loaded.", MessageLevel.CONFIG);
     }
 }

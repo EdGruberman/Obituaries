@@ -65,7 +65,7 @@ Material:
     GOLD_ORE: gold ore
     IRON_ORE: iron ore
     COAL_ORE: coal ore
-    LOG: a log
+    LOG: wood
     LEAVES: leaves
     SPONGE: a sponge
     GLASS: glass
@@ -79,8 +79,8 @@ Material:
     DETECTOR_RAIL: a detector rail
     PISTON_STICKY_BASE: a piston sticky base 
     WEB: a web
-    LONG_GRASS: long grass 
-    DEAD_BUSH: a dead bush
+    LONG_GRASS: dead grass
+    DEAD_BUSH: a dead shrub
     PISTON_BASE: a piston base
     PISTON_EXTENSION: a piston extension
     WOOL: wool
@@ -249,5 +249,60 @@ Material:
     COOKIE: a cookie
     MAP: a map 
     SHEARS: shears
-    GOLD_RECORD: a gold record
-    GREEN_RECORD: a green record
+    GOLD_RECORD: a gold disc
+    GREEN_RECORD: a green disc
+MaterialData:
+    "SAPLING:0": an oak sapling
+    "SAPLING:1": a spruce sapling
+    "SAPLING:2": a birch sapling
+    "LOG:0": oak wood
+    "LOG:1": spruce wood
+    "LOG:2": birch wood
+    "LEAVES:0": oak leaves
+    "LEAVES:1": spruce leaves
+    "LEAVES:2": birch leaves
+    "LONG_GRASS:0": dead grass
+    "LONG_GRASS:1": tall grass
+    "LONG_GRASS:2": a live shrub
+    "WOOL:0": white wool
+    "WOOL:1": orange wool
+    "WOOL:2": magenta wool
+    "WOOL:3": light blue wool
+    "WOOL:4": yellow wool
+    "WOOL:5": light green wool
+    "WOOL:6": pink wool
+    "WOOL:7": gray wool
+    "WOOL:8": light gray wool
+    "WOOL:9": cyan wool
+    "WOOL:10": purple wool
+    "WOOL:11": blue wool
+    "WOOL:12": brown wool
+    "WOOL:13": dark green wool
+    "WOOL:14": red wool
+    "WOOL:15": black wool
+    "DOUBLE_STEP:0": a double stone slab
+    "DOUBLE_STEP:1": a double sandstone slab
+    "DOUBLE_STEP:2": a double wooden slab
+    "DOUBLE_STEP:3": a double cobblestone slab
+    "STEP:0": a stone slab
+    "STEP:1": a sandstone slab
+    "STEP:2": a wooden slab
+    "STEP:3": a cobblestone slab
+    "COAL:0": coal
+    "COAL:1": charcoal
+    "INK_SACK:0": an ink sac
+    "INK_SACK:1": rose red
+    "INK_SACK:2": cactus green
+    "INK_SACK:3": cocoa beans
+    "INK_SACK:4": lapis lazuli dye
+    "INK_SACK:5": purple dye
+    "INK_SACK:6": cyan dye
+    "INK_SACK:7": light gray dye
+    "INK_SACK:8": gray dye
+    "INK_SACK:9": pink dye
+    "INK_SACK:10": lime dye
+    "INK_SACK:11": dandelion yellow
+    "INK_SACK:12": light blue dye
+    "INK_SACK:13": magenta dye
+    "INK_SACK:14": orange dye
+    "INK_SACK:15": bone meal
