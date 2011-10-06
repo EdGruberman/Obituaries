@@ -1,24 +1,25 @@
 default: '%1$s died.'
 DamageCause:
-    ENTITY_ATTACK: '%1$s was killed by %2$s.'
-    PROJECTILE: '%1$s died from being hit by %2$s.'
-    ENTITY_EXPLOSION: '%1$s died in an explosion from %2$s.'
-    BLOCK_EXPLOSION: '%1$s died in an explosion of %2$s.'
-    CONTACT: '%1$s died from contact with %2$s.'
-    SUFFOCATION: '%1$s died from suffocating in %2$s.'
-    LIGHTNING: '%1$s died from being struck by %2$s.'
-    FALL: '%1$s died from falling %2$s blocks.'
-    SUICIDE: '%1$s committed suicide.'
-    FIRE: '%1$s died in fire.'
-    FIRE_TICK: '%1$s died from burning.'
-    LAVA: '%1$s died in lava.'
-    DROWNING: '%1$s died from drowning.'
-    VOID: '%1$s died from falling in to the void.'
-    CUSTOM: '%1$s died from something.'
+    ENTITY_ATTACK: '%1$s was slain by %2$s'
+    PROJECTILE: '%1$s was shot by %2$s'
+    ENTITY_EXPLOSION: '%1$s blew up with %2$s'
+    BLOCK_EXPLOSION: '%1$s blew up in %2$s'
+    CONTACT: '%1$s died from touching %2$s'
+    SUFFOCATION: '%1$s suffocated in %2$s'
+    LIGHTNING: '%1$s died from being struck by %2$s'
+    FALL: '%1$s hit the ground too hard after falling %2$s blocks'
+    SUICIDE: '%1$s committed suicide'
+    FIRE: '%1$s went up in flames'
+    FIRE_TICK: '%1$s burned to death'
+    LAVA: '%1$s tried to swim in lava'
+    DROWNING: '%1$s drowned'
+    VOID: '%1$s fell out of the world'
+    STARVATION: '%1$s starved to death'
+    CUSTOM: '%1$s died'
 weapon: '$1$s with %2$s'
 hand: 'a bare fist'
 owners:
-    Projectile: '%1$s shot by %2$s'
+    Projectile: '%2$s with %1$s'
     Tameable: '%1$s tamed by %2$s'
     Vehicle: '%1$s ridden by %2$s'
 Entity:
@@ -47,6 +48,11 @@ Entity:
     Snowball: a snowball
     Boat: a boat
     Minecart: a minecart
+    Enderman: an enderman
+    ExperienceOrb: an experience orb
+    CaveSpider: a cave spider
+    FallingSand: falling sand
+    Silverfish: a silverfish
 Material:
     AIR: air
     STONE: stone

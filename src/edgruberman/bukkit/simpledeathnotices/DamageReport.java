@@ -26,7 +26,6 @@ class DamageReport {
     MaterialData source;
     
     DamageReport(final EntityDamageEvent event) {
-        
         this.event = event;
         
         // Capture volatile relevant status information for later reference
@@ -67,7 +66,7 @@ class DamageReport {
             
         } else if (this.event.getCause() == DamageCause.SUFFOCATION) {
             // Suffocating material
-            description = DeathMonitor.materialNames.get(this.source);
+            description = DamageReport.describeMaterial(this.source);
             
         } else if (this.event.getCause() == DamageCause.FALL) {
             // Falling distance

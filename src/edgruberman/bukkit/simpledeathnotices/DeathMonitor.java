@@ -9,6 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
@@ -43,7 +44,7 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
     
     @Override
     public void onEntityDeath (final EntityDeathEvent death) {
-        if (!(death.getEntity() instanceof Player)) return;
+        if (!(death instanceof PlayerDeathEvent)) return;
         
         String damager = null;
         DamageCause cause = null;
@@ -56,6 +57,11 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
         String format = DeathMonitor.causeFormats.get(cause);
         if (format == null) return;
         
+        // Clear default death message
+        PlayerDeathEvent pde = (PlayerDeathEvent) death;
+        pde.setDeathMessage(null);
+        
+        // Replace with a custom death message
         String message = String.format(format
                 , ((Player) death.getEntity()).getDisplayName()
                 , damager
