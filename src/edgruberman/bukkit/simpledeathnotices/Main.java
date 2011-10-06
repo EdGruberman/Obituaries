@@ -61,7 +61,7 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
         DeathMonitor.ownerFormats.clear();
         for (String name: cfg.getKeys("owners")) {
             DeathMonitor.ownerFormats.put(name, cfg.getString("owners." + name));
-            Main.messageManager.log("Owner Format for" + name + ": " + DeathMonitor.ownerFormats.get(name), MessageLevel.CONFIG);
+            Main.messageManager.log("Owner Format for " + name + ": " + DeathMonitor.ownerFormats.get(name), MessageLevel.CONFIG);
         }
 
         // Entity
