@@ -9,13 +9,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 
-final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
+final class DeathMonitor extends EntityListener {
     
     static final String DEFAULT_FORMAT = "%1$s died."; // 1 = Victim, 2 = Killer
     static final String DEFAULT_WEAPON_FORMAT = "%1$s with %2$s"; // 1 = Killer, 2 = Weapon
@@ -38,7 +39,7 @@ final class DeathMonitor extends org.bukkit.event.entity.EntityListener{
     @Override
     public void onEntityDamage(final EntityDamageEvent event) {
         if (event.isCancelled() || !(event.getEntity() instanceof Player)) return;
-        
+        System.out.println(event.getCause());
         new DamageReport(event);
     }
     

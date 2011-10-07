@@ -3,12 +3,13 @@ package edgruberman.bukkit.simpledeathnotices;
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.material.MaterialData;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
 
-public final class Main extends org.bukkit.plugin.java.JavaPlugin {
+public final class Main extends JavaPlugin {
     
     static ConfigurationFile configurationFile;
     static MessageManager messageManager;
@@ -23,6 +24,7 @@ public final class Main extends org.bukkit.plugin.java.JavaPlugin {
     
     public void onEnable() {
         new DeathMonitor(this);
+        new ReportShredder(this);
         
         Main.messageManager.log("Plugin Enabled");
     }
