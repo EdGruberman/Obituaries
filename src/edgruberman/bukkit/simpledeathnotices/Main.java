@@ -1,10 +1,10 @@
 package edgruberman.bukkit.simpledeathnotices;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
@@ -14,21 +14,24 @@ public final class Main extends JavaPlugin {
     static ConfigurationFile configurationFile;
     static MessageManager messageManager;
     
+    @Override
     public void onLoad() {
         Main.messageManager = new MessageManager(this);
         Main.messageManager.log("Version " + this.getDescription().getVersion());
         
         Main.configurationFile = new ConfigurationFile(this);
-        this.loadConfiguration();
     }
     
+    @Override
     public void onEnable() {
+        this.loadConfiguration();
         new DeathMonitor(this);
         new ReportShredder(this);
         
         Main.messageManager.log("Plugin Enabled");
     }
     
+    @Override
     public void onDisable() {
         DamageReport.last.clear();
         
@@ -36,14 +39,14 @@ public final class Main extends JavaPlugin {
     }
     
     private void loadConfiguration() {
-        Configuration cfg = Main.configurationFile.getConfiguration();
+        FileConfiguration cfg = Main.configurationFile.getConfig();
         
         // Load default format.
         DeathMonitor.causeFormats.clear();
         DeathMonitor.causeFormats.put(null, cfg.getString("default", DeathMonitor.DEFAULT_FORMAT));
         
         // Load damage cause specific formats.
-        for (String name: cfg.getKeys("DamageCause")) {
+        for (String name: cfg.getConfigurationSection("DamageCause").getKeys(false)) {
             DamageCause cause = DamageCause.valueOf(name);
             if (cause == null) continue;
             
@@ -56,26 +59,30 @@ public final class Main extends JavaPlugin {
         Main.messageManager.log("Weapon Format: " + DeathMonitor.weaponFormat, MessageLevel.CONFIG);
         
         // hand
-        DeathMonitor.weaponFormat = cfg.getString("hand", DeathMonitor.DEFAULT_HAND);
+        DeathMonitor.hand = cfg.getString("hand", DeathMonitor.DEFAULT_HAND);
         Main.messageManager.log("Hand: " + DeathMonitor.hand, MessageLevel.CONFIG);
+        
+        // enchanted
+        DeathMonitor.enchanted = cfg.getString("enchanted", DeathMonitor.DEFAULT_ENCHANTED);
+        Main.messageManager.log("Enchanted: " + DeathMonitor.enchanted, MessageLevel.CONFIG);
         
         // owners
         DeathMonitor.ownerFormats.clear();
-        for (String name: cfg.getKeys("owners")) {
+        for (String name: cfg.getConfigurationSection("owners").getKeys(false)) {
             DeathMonitor.ownerFormats.put(name, cfg.getString("owners." + name));
             Main.messageManager.log("Owner Format for " + name + ": " + DeathMonitor.ownerFormats.get(name), MessageLevel.CONFIG);
         }
 
         // Entity
         DeathMonitor.entityNames.clear();
-        for (String name: cfg.getKeys("Entity"))
+        for (String name: cfg.getConfigurationSection("Entity").getKeys(false))
             DeathMonitor.entityNames.put(name, cfg.getString("Entity." + name, name.toLowerCase()));
         
         Main.messageManager.log(DeathMonitor.entityNames.size() + " entity names loaded.", MessageLevel.CONFIG);
         
         // Material
         DeathMonitor.materialNames.clear();
-        for (String name: cfg.getKeys("Material")) {
+        for (String name: cfg.getConfigurationSection("Material").getKeys(false)) {
             Material material = Material.valueOf(name);
             if (material == null) continue;
             
@@ -85,7 +92,7 @@ public final class Main extends JavaPlugin {
         
         // MaterialData
         DeathMonitor.materialDataNames.clear();
-        for (String entry: cfg.getKeys("MaterialData")) {
+        for (String entry: cfg.getConfigurationSection("MaterialData").getKeys(false)) {
             Material material = Material.valueOf(entry.split(":")[0]);
             Byte data = Byte.parseByte(entry.split(":")[1]);
             DeathMonitor.materialDataNames.put(new MaterialData(material, data), cfg.getString("MaterialData." + entry));

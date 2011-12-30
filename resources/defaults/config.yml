@@ -1,4 +1,4 @@
-default: '%1$s died.'
+default: '%1$s died'
 DamageCause:
     ENTITY_ATTACK: '%1$s was slain by %2$s'
     PROJECTILE: '%1$s was shot by %2$s'
@@ -10,14 +10,15 @@ DamageCause:
     FALL: '%1$s hit the ground too hard after falling %2$s blocks'
     SUICIDE: '%1$s committed suicide'
     FIRE: '%1$s went up in flames'
-    FIRE_TICK: '%1$s burned to death'
+    FIRE_TICK: '%1$s burned to death after being lit by %2$s'
     LAVA: '%1$s tried to swim in lava'
     DROWNING: '%1$s drowned'
     VOID: '%1$s fell out of the world'
     STARVATION: '%1$s starved to death'
     CUSTOM: '%1$s died'
-weapon: '$1$s with %2$s'
+weapon: '%1$s with %2$s'
 hand: 'a bare fist'
+enchanted: ' that is enchanted'
 owners:
     Projectile: '%2$s with %1$s'
     Tameable: '%1$s tamed by %2$s'
@@ -26,9 +27,10 @@ Entity:
     Chicken: a chicken
     Cow: a cow
     Creeper: a creeper
+    PoweredCreeper: an electrified creeper
     Ghast: a ghast
     Giant: a giant
-    PigZombie: a pig zombie
+    PigZombie: a zombie pigman
     Sheep: a sheep
     Skeleton: a skeleton
     Slime: a slime
@@ -53,6 +55,11 @@ Entity:
     CaveSpider: a cave spider
     FallingSand: falling sand
     Silverfish: a silverfish
+    MagmaCube: a magma cube
+    Blaze: a blaze
+    EnderDragon: an ender dragon
+    Villager: a villager
+    Mooshroom: a mooshroom
 Material:
     AIR: air
     STONE: stone
@@ -60,7 +67,7 @@ Material:
     DIRT: dirt
     COBBLESTONE: cobblestone 
     WOOD: wood
-    SAPLING: sapling
+    SAPLING: a sapling
     BEDROCK: bedrock
     WATER: water
     STATIONARY_WATER: water 
@@ -145,12 +152,38 @@ Material:
     SOUL_SAND: soul sand
     GLOWSTONE: glowstone
     PORTAL: a portal
-    JACK_O_LANTERN: a jack o' lantern
+    JACK_O_LANTERN: a jack o' lantern block
     CAKE_BLOCK: a cake block
-    DIODE_BLOCK_OFF: a diode block
-    DIODE_BLOCK_ON: a diode block
+    DIODE_BLOCK_OFF: a diode
+    DIODE_BLOCK_ON: a diode
     LOCKED_CHEST: a locked chest
     TRAP_DOOR: a trap door
+    MONSTER_EGGS: a silverfish egg block
+    SMOOTH_BRICK: stone brick
+    HUGE_MUSHROOM_1: a huge brown mushroom block
+    HUGE_MUSHROOM_2: a huge red mushroom block
+    IRON_FENCE: iron bars
+    THIN_GLASS: a glass pane
+    MELON_BLOCK: a melon
+    PUMPKIN_STEM: a pumpkin stem
+    MELON_STEM: a melon stem
+    VINE: a vine
+    FENCE_GATE: a fence gate
+    BRICK_STAIRS: brick stairs
+    SMOOTH_STAIRS: stone stairs
+    MYCEL: mycellium
+    WATER_LILY: a lily pad
+    NETHER_BRICK: nether brick
+    NETHER_FENCE: a nether fence
+    NETHER_BRICK_STAIRS: nether brick stairs
+    NETHER_WARTS: a nether wart
+    ENCHANTMENT_TABLE: an enchantment table
+    BREWING_STAND: a brewing stand
+    CAULDRON: a cauldron
+    ENDER_PORTAL: an ender portal
+    ENDER_PORTAL_FRAME: an ender portal frame
+    ENDER_STONE: an ender stone
+    DRAGON_EGG: a dragon egg
     IRON_SPADE: an iron shovel
     IRON_PICKAXE: an iron pickaxe
     IRON_AXE: an iron axe
@@ -255,8 +288,40 @@ Material:
     COOKIE: a cookie
     MAP: a map 
     SHEARS: shears
+    MELON: a melon
+    PUMPKIN_SEEDS: pumpkin seeds
+    MELON_SEEDS: melon seeds
+    RAW_BEEF: raw beef
+    COOKED_BEEF: a steak
+    RAW_CHICKEN: raw chicken
+    COOKED_CHICKEN: a cooked chicken
+    ROTTEN_FLESH: rotten flesh
+    ENDER_PEARL: an ender pearl
+    BLAZE_ROD: a blaze rod
+    GHAST_TEAR: a ghast tear
+    GOLD_NUGGET: a gold nugget
+    NETHER_STALK: a nether wart
+    POTION: a potion
+    GLASS_BOTTLE: a glass bottle
+    SPIDER_EYE: a spider eye
+    FERMENTED_SPIDER_EYE: a fermented spider eye
+    BLAZE_POWDER: blaze powder
+    MAGMA_CREAM: magma cream
+    BREWING_STAND_ITEM: a brewing stand
+    CAULDRON_ITEM: a cauldron
+    EYE_OF_ENDER: an eye of ender
+    SPECKLED_MELON: a gilstering melon
     GOLD_RECORD: a gold disc
     GREEN_RECORD: a green disc
+    RECORD_3: an orange disc
+    RECORD_4: a red disc
+    RECORD_5: a lime green disc
+    RECORD_6: a purple disc
+    RECORD_7: a violet disc
+    RECORD_8: a black disc
+    RECORD_9: a white disc
+    RECORD_10: a sea green disc
+    RECORD_11: a broken disc
 MaterialData:
     "SAPLING:0": an oak sapling
     "SAPLING:1": a spruce sapling
@@ -296,6 +361,9 @@ MaterialData:
     "STEP:3": a cobblestone slab
     "COAL:0": coal
     "COAL:1": charcoal
+    "SMOOTH_BRICK:0": stone brick
+    "SMOOTH_BRICK:1": mossy stone brick
+    "SMOOTH_BRICK:2": cracked stone brick
     "INK_SACK:0": an ink sac
     "INK_SACK:1": rose red
     "INK_SACK:2": cactus green
@@ -312,3 +380,6 @@ MaterialData:
     "INK_SACK:13": magenta dye
     "INK_SACK:14": orange dye
     "INK_SACK:15": bone meal
+    "MONSTER_EGGS:0": a silverfish stone egg block
+    "MONSTER_EGGS:1": a silverfish cobblestone egg block
+    "MONSTER_EGGS:2": a silverfish brick egg block
