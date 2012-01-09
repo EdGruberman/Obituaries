@@ -4,7 +4,7 @@
     <property name="implementation-name" value="edgruberman/bukkit/simpledeathnotices/"/>
     <property name="manifest-classpath" value=""/>
         
-    <property name="test" location="D:/Documents/Personal/Games/Minecraft/Server/plugins"/>
+    <property name="test" location="D:/Documents/Personal/Games/Minecraft/Hardcore/Server/plugins"/>
     <property name="author" value="EdGruberman (ed@rjump.com)"/>
         
     <property name="src" location="src"/>
