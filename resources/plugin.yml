@@ -1,5 +1,5 @@
-name: SimpleDeathNotices
-main: edgruberman.bukkit.simpledeathnotices.Main
+name: Obituaries
+main: edgruberman.bukkit.obituaries.Main
 version: %VERSION%
 depend: [MessageManager]
 author: EdGruberman (ed@rjump.com)

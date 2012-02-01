@@ -16,13 +16,14 @@ DamageCause:
     VOID: '%1$s fell out of the world'
     STARVATION: '%1$s starved to death'
     CUSTOM: '%1$s died'
-weapon: '%1$s with %2$s'
+weapon: '%1$s wielding %2$s'
 hand: 'a bare fist'
-enchanted: ' that is enchanted'
+enchanted: '%1$s that is enchanted'
 owners:
     Projectile: '%2$s with %1$s'
     Tameable: '%1$s tamed by %2$s'
     Vehicle: '%1$s ridden by %2$s'
+    Passenger: '%1$s riding %2$s'
 Entity:
     Chicken: a chicken
     Cow: a cow

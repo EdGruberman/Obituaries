@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<project name="SimpleDeathNotices" default="Test (Build and Copy)" basedir="..">
-    <property name="implementation-title" value="edgruberman.bukkit.simpledeathnotices"/>
-    <property name="implementation-name" value="edgruberman/bukkit/simpledeathnotices/"/>
+<project name="Obituaries" default="Test (Build and Copy)" basedir="..">
+    <property name="implementation-title" value="edgruberman.bukkit.obituaries"/>
+    <property name="implementation-name" value="edgruberman/bukkit/obituaries/"/>
     <property name="manifest-classpath" value=""/>
-        
+
     <property name="test" location="D:/Documents/Personal/Games/Minecraft/Hardcore/Server/plugins"/>
     <property name="author" value="EdGruberman (ed@rjump.com)"/>
-        
+
     <property name="src" location="src"/>
     <property name="resources" location="resources"/>
     <property name="stage" location="stage"/>
     <property name="dist" location="dist"/>
     <property name="doc" location="doc"/>
-    
+
     <property name="version.properties" location="${ant.file}/../version.properties"/>
-    
+
     <path id="classpath">
         <fileset dir="." includes="lib/**"/>
         <fileset dir="../Shared/lib" includes="**"/>
@@ -38,12 +38,12 @@
         <property file="${version.properties}"/>
         <property name="version" value="${version.major}.${version.minor}.${version.revision}${version.type}${version.build}"/>
         <replace file="${stage}/jar/plugin.yml" token="%VERSION%" value="${version}"/>
-    
+
         <mkdir dir="${stage}/jar/defaults"/>
         <copy todir="${stage}/jar/defaults">
             <fileset dir="${resources}/defaults"/>
         </copy>
-    
+
         <manifest file="${stage}/MANIFEST.MF">
             <section name="${implementation-name}">
                 <attribute name="Specification-Title" value="${ant.project.name}"/>
