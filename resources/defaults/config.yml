@@ -1,24 +1,27 @@
-default: '%1$s died'
 DamageCause:
-    ENTITY_ATTACK: '%1$s was slain by %2$s'
-    PROJECTILE: '%1$s was shot by %2$s'
-    ENTITY_EXPLOSION: '%1$s blew up with %2$s'
     BLOCK_EXPLOSION: '%1$s blew up in %2$s'
     CONTACT: '%1$s died from touching %2$s'
-    SUFFOCATION: '%1$s suffocated in %2$s'
-    LIGHTNING: '%1$s died from being struck by %2$s'
+    CUSTOM: '%1$s died'
+    DROWNING: '%1$s drowned'
+    ENTITY_ATTACK: '%1$s was slain by %2$s'
+    ENTITY_EXPLOSION: '%1$s blew up with %2$s'
     FALL: '%1$s hit the ground too hard after falling %2$s blocks'
-    SUICIDE: '%1$s committed suicide'
     FIRE: '%1$s went up in flames'
     FIRE_TICK: '%1$s burned to death after being lit by %2$s'
     LAVA: '%1$s tried to swim in lava'
-    DROWNING: '%1$s drowned'
-    VOID: '%1$s fell out of the world'
+    LIGHTNING: '%1$s died from being struck by %2$s'
+    MAGIC: '%1$s was killed by magic'
+    POISON: '%1$s was poisoned'
+    PROJECTILE: '%1$s was hit by %2$s'
     STARVATION: '%1$s starved to death'
-    CUSTOM: '%1$s died'
+    SUFFOCATION: '%1$s suffocated in %2$s'
+    SUICIDE: '%1$s committed suicide'
+    VOID: '%1$s fell out of the world'
 weapon: '%1$s wielding %2$s'
 hand: 'a bare fist'
 enchanted: '%1$s that is enchanted'
+edible: 'eating %1$s'
+drinkable: 'drinking %1$s'
 owners:
     Projectile: '%2$s with %1$s'
     Tameable: '%1$s tamed by %2$s'
@@ -61,6 +64,7 @@ Entity:
     EnderDragon: an ender dragon
     Villager: a villager
     Mooshroom: a mooshroom
+    ThrownPotion: a splash potion
 Material:
     AIR: air
     STONE: stone
@@ -384,3 +388,56 @@ MaterialData:
     "MONSTER_EGGS:0": a silverfish stone egg block
     "MONSTER_EGGS:1": a silverfish cobblestone egg block
     "MONSTER_EGGS:2": a silverfish brick egg block
+ItemStack:
+    "POTION:16388": a Splash Potion of Poison
+    "POTION:16452": a Splash Potion of Poison (extended)
+    "POTION:16420": a Splash Potion of Poison II
+    "POTION:16392": a Splash Potion of Weakness
+    "POTION:16456": a Splash Potion of Weakness (extended)
+    "POTION:16394": a Splash Potion of Slowness
+    "POTION:16458": a Splash Potion of Slowness (extended)
+    "POTION:16396": a Splash Potion of Harming
+    "POTION:16428": a Splash Potion of Harming II
+    "POTION:16385": a Splash Potion of Regeneration
+    "POTION:16449": a Splash Potion of Regeneration (extended)
+    "POTION:16417": a Splash Potion of Regeneration II
+    "POTION:16386": a Splash Potion of Swiftness
+    "POTION:16450": a Splash Potion of Swiftness (extended)
+    "POTION:16418": a Splash Potion of Swiftness II
+    "POTION:16387": a Splash Potion of Fire Resistance
+    "POTION:16451": a Splash Potion of Fire Resistance (extended)
+    "POTION:16389": a Splash Potion of Healing
+    "POTION:16421": a Splash Potion of Healing II
+    "POTION:16393": a Splash Potion of Strength
+    "POTION:16457": a Splash Potion of Strength
+    "POTION:16425": a Splash Potion of Strength II
+    "POTION:16384": a Splash Mundane Potion
+    "POTION:8196": a Potion of Poison
+    "POTION:8260": a Potion of Poison (extended)
+    "POTION:8228": a Potion of Poison II
+    "POTION:8200": a Potion of Weakness
+    "POTION:8264": a Potion of Weakness (extended)
+    "POTION:8202": a Potion of Slowness
+    "POTION:8266": a Potion of Slowness (extended)
+    "POTION:8204": a Potion of Harming
+    "POTION:8236": a Potion of Harming II
+    "POTION:8193": a Potion of Regeneration
+    "POTION:8257": a Potion of Regeneration (extended)
+    "POTION:8225": a Potion of Regeneration II
+    "POTION:8194": a Potion of Swiftness
+    "POTION:8258": a Potion of Swiftness (extended)
+    "POTION:8226": a Potion of Swiftness II
+    "POTION:8195": a Potion of Fire Resistance
+    "POTION:8259": a Potion of Fire Resistance (extended)
+    "POTION:8197": a Potion of Healing
+    "POTION:8229": a Potion of Healing II
+    "POTION:8201": a Potion of Strength
+    "POTION:8265": a Potion of Strength
+    "POTION:8233": a Potion of Strength II
+    "POTION:0": a Water Bottle
+    "POTION:16": a Awkward Potion
+    "POTION:32": a Thick Potion
+    "POTION:64": a Mundane Potion (extended)
+    "POTION:8192": a Mundane Potion
+PotionEffectType:
+    HARM: harm

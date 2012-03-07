@@ -125,7 +125,7 @@ public final class ConfigurationFile {
         if (this.file.exists()) return this.config;
 
         // Check if defaults are supplied in JAR
-        InputStream defaults = (this.defaults != null ? this.owner.getClass().getResourceAsStream(this.defaults) : null);
+        final InputStream defaults = (this.defaults != null ? this.owner.getClass().getResourceAsStream(this.defaults) : null);
         if (defaults == null) {
             // No file, no defaults, reset to empty configuration
             this.config = new YamlConfiguration();
@@ -184,13 +184,13 @@ public final class ConfigurationFile {
                     return;
                 }
 
-                Main.messageManager.log("Queueing configuration file save request to run in " + (this.maxSaveFrequency - sinceLastSave) + "seconds; Last save was " + sinceLastSave + " seconds ago; " + this.file, MessageLevel.FINEST);
+                Main.messageManager.log("Queueing configuration file save request to run in " + (this.maxSaveFrequency - sinceLastSave) + " seconds; Last save was " + sinceLastSave + " seconds ago; " + this.file, MessageLevel.FINEST);
 
                 // Schedule task to save cache to file system.
                 final ConfigurationFile that = this;
                 this.taskSave = this.owner.getServer().getScheduler().scheduleSyncDelayedTask(
                           this.owner
-                        , new Runnable() { public void run() { that.save(true); } }
+                        , new Runnable() { @Override public void run() { that.save(true); } }
                         , (this.maxSaveFrequency - sinceLastSave) * ConfigurationFile.TICKS_PER_SECOND
                 );
 
@@ -201,7 +201,7 @@ public final class ConfigurationFile {
         try {
             this.config.save(this.file);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Main.messageManager.log("Unable to save configuration file; " + this.file, MessageLevel.SEVERE, e);
             return;
 
@@ -222,4 +222,5 @@ public final class ConfigurationFile {
     boolean isSaveQueued() {
         return (this.taskSave != null && this.owner.getServer().getScheduler().isQueued(this.taskSave));
     }
+
 }

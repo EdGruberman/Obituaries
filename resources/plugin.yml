@@ -1,5 +1,6 @@
-name: Obituaries
-main: edgruberman.bukkit.obituaries.Main
-version: %VERSION%
+name: @NAME@
+description: Describes player death events
 depend: [MessageManager]
-author: EdGruberman (ed@rjump.com)
+version: @VERSION@
+author: @AUTHOR@
+main: edgruberman.bukkit.obituaries.Main

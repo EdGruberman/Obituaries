@@ -14,8 +14,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 
 import edgruberman.bukkit.messagemanager.MessageLevel;
 
@@ -29,9 +31,13 @@ final class Coroner implements Listener {
     static Map<String, String> ownerFormats = new HashMap<String, String>();
     static Map<Material, String> materialNames = new HashMap<Material, String>();
     static Map<MaterialData, String> materialDataNames = new HashMap<MaterialData, String>();
+    static Map<ItemStack, String> itemStackNames = new HashMap<ItemStack, String>();
+    static Map<PotionEffectType, String> potionEffectTypeNames = new HashMap<PotionEffectType, String>();
     static String weaponFormat = null;
     static String hand = null;
     static String enchanted = null;
+    static String edible = null;
+    static String drinkable = null;
 
     Coroner (final Plugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -51,32 +57,53 @@ final class Coroner implements Listener {
         Damage.recordCombuster(event);
     }
 
+//    @EventHandler(priority = EventPriority.MONITOR)
+//    public void onPotionSplash(final PotionSplashEvent event) {
+//        if (event.isCancelled()) return;
+//
+//        for (PotionEffect effect : event.getPotion().getEffects())
+//            if (effect.getType().equals(PotionEffectType.HARM))
+//
+//
+//
+////                || !(event.getAffectedEntities() instanceof Player)) return;
+////
+////        Damage.recordCombuster(event);
+//    }
+
+//    @EventHandler(priority = EventPriority.MONITOR)
+//    public void onPlayerInteract(final PlayerInteractEvent event) {
+//        // TODO - use event.isCancelled() when bug is fixed that doesn't check right clicking on air with item returning true
+//        if (event.useInteractedBlock() == Result.DENY && event.useItemInHand() == Result.DENY) return;
+//
+//        Damage.recordPoisoner(event);
+//    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDeath (final EntityDeathEvent death) {
         if (!(death instanceof PlayerDeathEvent)) return;
 
-        Damage kill = Damage.last.get(death.getEntity());
-        String causeFormat = Coroner.causeFormats.get((kill != null ? kill.event.getCause() : null));
+        final Damage kill = Damage.last.get(death.getEntity());
+        final String causeFormat = Coroner.causeFormats.get((kill != null ? kill.event.getCause() : DamageCause.CUSTOM));
 
         // Use default death message if no format specified
         if (causeFormat == null) return;
 
         // Show custom death message
-        String damager = kill.describeDamager();
-        String message = String.format(causeFormat
-                , ((Player) death.getEntity()).getDisplayName()
-                , damager
-        );
+        final String source = (kill != null ? kill.describeSource() : null);
+        final String message = String.format(causeFormat, ((Player) death.getEntity()).getDisplayName(), source);
         Main.messageManager.broadcast(message, MessageLevel.EVENT);
 
         // Remove default death message
-        PlayerDeathEvent pde = (PlayerDeathEvent) death;
+        final PlayerDeathEvent pde = (PlayerDeathEvent) death;
         pde.setDeathMessage(null);
+
+        Damage.remove(death.getEntity());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(final PlayerQuitEvent quit) {
-        Damage.last.remove(quit.getPlayer());
+        Damage.remove(quit.getPlayer());
     }
 
 }
