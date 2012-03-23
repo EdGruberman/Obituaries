@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,8 +31,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
-
-import edgruberman.bukkit.messagemanager.MessageLevel;
 
 /**
  * Tracks the last damage received to identify the source of death.
@@ -314,7 +313,7 @@ final class Damage {
 //        try { throw new Exception(); } catch (Exception e) { e.printStackTrace(); }
 
         if (event instanceof EntityCombustByBlockEvent) {
-            Main.messageManager.log("Block combust now triggers! Update Obituaries plugin", MessageLevel.FINE);
+            Main.messageManager.owner.getLogger().log(Level.FINE, "Block combust now triggers! Update Obituaries plugin");
             final EntityCombustByBlockEvent byBlock = (EntityCombustByBlockEvent) event;
             Damage.combuster.put(event.getEntity(), Damage.describeMaterial(byBlock.getCombuster().getState().getData()));
             return;
