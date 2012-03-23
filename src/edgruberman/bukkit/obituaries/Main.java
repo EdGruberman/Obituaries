@@ -1,5 +1,6 @@
 package edgruberman.bukkit.obituaries;
 
+import java.util.logging.Handler;
 import java.util.logging.Level;
 
 import org.bukkit.Material;
@@ -10,20 +11,28 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
+import edgruberman.bukkit.messagemanager.MessageLevel;
 import edgruberman.bukkit.messagemanager.MessageManager;
 
 public final class Main extends JavaPlugin {
 
+    private static final String MINIMUM_VERSION_CONFIG = "2.0.0b18";
+
     static MessageManager messageManager;
 
-    @Override
-    public void onLoad() {
-        Main.messageManager = new MessageManager(this);
-    }
+    private ConfigurationFile configurationFile;
 
     @Override
     public void onEnable() {
-        this.loadConfiguration();
+        this.configurationFile = new ConfigurationFile(this);
+        this.configurationFile.setMinVersion(Main.MINIMUM_VERSION_CONFIG);
+        this.configurationFile.load();
+        this.setLoggingLevel();
+
+        Main.messageManager = new MessageManager(this);
+
+        this.configure();
+
         new Coroner(this);
     }
 
@@ -32,7 +41,20 @@ public final class Main extends JavaPlugin {
         Damage.last.clear();
     }
 
-    private void loadConfiguration() {
+    private void setLoggingLevel() {
+        final String name = this.configurationFile.getConfig().getString("logLevel", "INFO");
+        Level level = MessageLevel.parse(name);
+        if (level == null) level = Level.INFO;
+
+        // Only set the parent handler lower if necessary, otherwise leave it alone for other configurations that have set it.
+        for (final Handler h : this.getLogger().getParent().getHandlers())
+            if (h.getLevel().intValue() > level.intValue()) h.setLevel(level);
+
+        this.getLogger().setLevel(level);
+        this.getLogger().log(Level.CONFIG, "Logging level set to: " + this.getLogger().getLevel());
+    }
+
+    private void configure() {
         final FileConfiguration config = (new ConfigurationFile(this)).load();
 
         Coroner.causeFormats.clear();

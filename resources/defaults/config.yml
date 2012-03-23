@@ -441,3 +441,5 @@ ItemStack:
     "POTION:8192": a Mundane Potion
 PotionEffectType:
     HARM: harm
+logLevel: INFO
+version: @VERSION@
