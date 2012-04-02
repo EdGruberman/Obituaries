@@ -313,35 +313,36 @@ final class Damage {
 //        try { throw new Exception(); } catch (Exception e) { e.printStackTrace(); }
 
         if (event instanceof EntityCombustByBlockEvent) {
-            Main.messageManager.owner.getLogger().log(Level.FINE, "Block combust now triggers! Update Obituaries plugin");
             final EntityCombustByBlockEvent byBlock = (EntityCombustByBlockEvent) event;
-            Damage.combuster.put(event.getEntity(), Damage.describeMaterial(byBlock.getCombuster().getState().getData()));
-            return;
+            if (byBlock.getCombuster() != null)
+                Main.messageManager.owner.getLogger().log(Level.WARNING, "Block combust now triggers with combuster! Update Obituaries plugin");
+
+            // Damage.combuster.put(event.getEntity(), Damage.describeMaterial(byBlock.getCombuster().getState().getData()));
+
+            // TODO Remove these assumptions when CraftBukkit fixes combust events for block contact
+            // Assume block
+
+            // Check current
+            final Location original = event.getEntity().getLocation();
+            if (Damage.identifyCombuster(original.clone(), event.getEntity())) return;
+
+            // Check closest on x
+            final Double adjustX = Damage.closestAdjustOnAxis(original.getX());
+            if (adjustX != null)
+                if (Damage.identifyCombuster(original.clone().add(adjustX, 0, 0), event.getEntity()))
+                    return;
+
+            // Check closest on z
+            final Double adjustZ = Damage.closestAdjustOnAxis(original.getZ());
+            if (adjustZ != null)
+                if (Damage.identifyCombuster(original.clone().add(0, 0, adjustZ), event.getEntity()))
+                    return;
+
+            // Check closest diagonal
+            if (adjustX != null && adjustZ != null)
+                if (Damage.identifyCombuster(original.clone().add(adjustX, 0, adjustZ), event.getEntity()))
+                    return;
         }
-
-        // TODO Remove these assumptions when CraftBukkit fixes combust events for block contact
-        // Assume block
-
-        // Check current
-        final Location original = event.getEntity().getLocation();
-        if (Damage.identifyCombuster(original.clone(), event.getEntity())) return;
-
-        // Check closest on x
-        final Double adjustX = Damage.closestAdjustOnAxis(original.getX());
-        if (adjustX != null)
-            if (Damage.identifyCombuster(original.clone().add(adjustX, 0, 0), event.getEntity()))
-                return;
-
-        // Check closest on z
-        final Double adjustZ = Damage.closestAdjustOnAxis(original.getZ());
-        if (adjustZ != null)
-            if (Damage.identifyCombuster(original.clone().add(0, 0, adjustZ), event.getEntity()))
-                return;
-
-        // Check closest diagonal
-        if (adjustX != null && adjustZ != null)
-            if (Damage.identifyCombuster(original.clone().add(adjustX, 0, adjustZ), event.getEntity()))
-                return;
 
     }
 
