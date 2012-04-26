@@ -1,6 +1,5 @@
 name: @NAME@
 description: Describes player death events
-depend: [MessageManager]
 version: @VERSION@
 author: @AUTHOR@
-main: edgruberman.bukkit.obituaries.Main
+main: @MAIN@

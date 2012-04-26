@@ -4,106 +4,210 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffectType;
-
-import edgruberman.bukkit.messagemanager.MessageLevel;
 
 /**
- * Monitors damage and death events, generating public notices for deaths.
+ * Monitors damage and death events, examines death events and reports findings.
+ * Coordinates activities between other investigation classes.
  */
-final class Coroner implements Listener {
+class Coroner implements Listener {
 
-    static Map<DamageCause, String> causeFormats = new HashMap<DamageCause, String>();
-    static Map<String, String> entityNames = new HashMap<String, String>();
-    static Map<String, String> ownerFormats = new HashMap<String, String>();
-    static Map<Material, String> materialNames = new HashMap<Material, String>();
-    static Map<MaterialData, String> materialDataNames = new HashMap<MaterialData, String>();
-    static Map<ItemStack, String> itemStackNames = new HashMap<ItemStack, String>();
-    static Map<PotionEffectType, String> potionEffectTypeNames = new HashMap<PotionEffectType, String>();
-    static String weaponFormat = null;
-    static String hand = null;
-    static String enchanted = null;
-    static String edible = null;
-    static String drinkable = null;
+    final Plugin plugin;
+    final Translator translator;
+    final FireInvestigator investigator;
+    final Alchemist alchemist;
+    final Map<Entity, Damage> damages = new HashMap<Entity, Damage>();
 
-    Coroner (final Plugin plugin) {
+    Coroner (final Plugin plugin, final Translator translator) {
+        this.plugin = plugin;
+        this.translator = translator;
+        this.investigator = new FireInvestigator(this);
+        this.alchemist = new Alchemist(this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    void clear() {
+        HandlerList.unregisterAll(this);
+        this.investigator.clear();
+        this.alchemist.clear();
+        this.damages.clear();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
-        if (event.isCancelled() || !(event.getEntity() instanceof Player)) return;
+        if (!(event.getEntity() instanceof Player)) return;
 
-        new Damage(event);
+        final Damage damage = new Damage(event);
+        this.damages.put(damage.event.getEntity(), damage);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityCombust(final EntityCombustEvent event) {
-        if (event.isCancelled() || !(event.getEntity() instanceof Player)) return;
+    @EventHandler(priority = EventPriority.LOW) // Before Formatter
+    public void onEntityDeath (final PlayerDeathEvent death) {
+        // Create unknown damage report if none previously recorded
+        if (!this.damages.containsKey(death.getEntity()))
+            this.onEntityDamage(new EntityDamageEvent(death.getEntity(), DamageCause.CUSTOM, 0));
 
-        Damage.recordCombuster(event);
-    }
+        final String message = this.describeDeath(death.getEntity());
+        this.remove(death.getEntity());
 
-//    @EventHandler(priority = EventPriority.MONITOR)
-//    public void onPotionSplash(final PotionSplashEvent event) {
-//        if (event.isCancelled()) return;
-//
-//        for (PotionEffect effect : event.getPotion().getEffects())
-//            if (effect.getType().equals(PotionEffectType.HARM))
-//
-//
-//
-////                || !(event.getAffectedEntities() instanceof Player)) return;
-////
-////        Damage.recordCombuster(event);
-//    }
-
-//    @EventHandler(priority = EventPriority.MONITOR)
-//    public void onPlayerInteract(final PlayerInteractEvent event) {
-//        // TODO - use event.isCancelled() when bug is fixed that doesn't check right clicking on air with item returning true
-//        if (event.useInteractedBlock() == Result.DENY && event.useItemInHand() == Result.DENY) return;
-//
-//        Damage.recordPoisoner(event);
-//    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityDeath (final EntityDeathEvent death) {
-        if (!(death instanceof PlayerDeathEvent)) return;
-
-        final Damage kill = Damage.last.get(death.getEntity());
-        final String causeFormat = Coroner.causeFormats.get((kill != null ? kill.event.getCause() : DamageCause.CUSTOM));
-
-        // Use default death message if no format specified
-        if (causeFormat == null) return;
+        // Leave default death message if no format specified
+        if (message == null) return;
 
         // Show custom death message
-        final String source = (kill != null ? kill.describeSource() : null);
-        final String message = String.format(causeFormat, ((Player) death.getEntity()).getDisplayName(), source);
-        Main.messageManager.broadcast(message, MessageLevel.EVENT);
-
-        // Remove default death message
-        final PlayerDeathEvent pde = (PlayerDeathEvent) death;
-        pde.setDeathMessage(null);
-
-        Damage.remove(death.getEntity());
+        death.setDeathMessage(message);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(final PlayerQuitEvent quit) {
-        Damage.remove(quit.getPlayer());
+        this.remove(quit.getPlayer());
+    }
+
+    private void remove(final Entity entity) {
+        this.damages.remove(entity);
+        this.alchemist.remove(entity);
+        this.investigator.remove(entity);
+    }
+
+    private String describeDeath(final Entity entity) {
+        final Damage kill = this.damages.get(entity);
+        final String format = this.translator.getDeathMessageFormat(kill.event.getCause());
+        if (format == null) return null;
+
+        return String.format(format, this.translator.formatName(kill.event.getEntity()), this.describeSource(kill));
+    }
+
+    private String describeSource(final Damage damage) {
+        String description = null;
+
+        switch (damage.event.getCause()) {
+
+        // Material
+        case BLOCK_EXPLOSION:
+            if (damage.sourceBlock == null) {
+                // Possibility might exist in CraftBukkit to return a null block for a TNT explosion
+                description = this.translator.formatMaterial(Material.TNT);
+            } else {
+                description = this.translator.formatMaterial(damage.sourceBlock);
+            }
+            break;
+
+        // Material
+        case CONTACT:
+        case SUFFOCATION:
+            description = this.translator.formatMaterial(damage.sourceBlock);
+            break;
+
+        case ENTITY_EXPLOSION: // Entity
+            final Entity exploder = ((EntityDamageByEntityEvent) damage.event).getDamager();
+            description = this.describeEntity(exploder);
+            break;
+
+        case ENTITY_ATTACK: // Weapon
+            description = this.describeAttacker(damage);
+            break;
+
+        case PROJECTILE: // Shooter
+            final Entity projectile = ((EntityDamageByEntityEvent) damage.event).getDamager();
+            description = this.describeEntity(projectile);
+            break;
+
+        // Potion effects
+        case MAGIC:
+            description = this.alchemist.getPotion(damage.event.getEntity());
+            break;
+
+        // Distance fallen
+        case FALL:
+            description = Integer.toString(damage.event.getDamage() + 3);
+            break;
+
+        // Combuster
+        case FIRE_TICK:
+            description = this.investigator.getCombuster(damage.event.getEntity());
+            break;
+
+        // Lightning
+        case LIGHTNING:
+            final Entity lightning = ((EntityDamageByEntityEvent) damage.event).getDamager();
+            description = this.describeEntity(lightning);
+            break;
+
+        }
+
+        return description;
+    }
+
+    /**
+     * Describes an entity under the context of being killed by it. Players will
+     * use their display names. Other entities will default to their Bukkit
+     * class name if a config.yml localized name does not match. Projectiles,
+     * Tameables, and Vehicles will include descriptions of their owners if
+     * a format in the language file is specified.
+     *
+     * Examples:
+     *   Player = EdGruberman
+     *   Arrow = EdGruberman with an arrow
+     *   Fireball = a ghast with a fireball
+     */
+    String describeEntity(final Entity entity) {
+        String description = this.translator.formatName(entity);
+
+        if (entity instanceof Tameable) {
+            final AnimalTamer tamer = ((Tameable) entity).getOwner();
+            if (tamer instanceof Entity && this.translator.owners.containsKey("Tameable"))
+                description = String.format(this.translator.owners.get("Tameable"), description, this.describeEntity((Entity) tamer));
+        }
+
+        if (entity instanceof Projectile && this.translator.owners.containsKey("Projectile")) {
+            final LivingEntity shooter = ((Projectile) entity).getShooter();
+            String shooterName = null;
+            if (shooter == null) {
+                shooterName = this.translator.formatMaterial(Material.DISPENSER);
+            } else if (shooter instanceof Entity) {
+                shooterName = this.describeEntity(shooter);
+            }
+            description = String.format(this.translator.owners.get("Projectile"), description, shooterName);
+        }
+
+        // Vehicle
+        if (!entity.isEmpty() && this.translator.owners.containsKey("Vehicle")) {
+            description = String.format(this.translator.owners.get("Vehicle"), description, this.describeEntity(entity.getPassenger()));
+        }
+
+        return description;
+    }
+
+    private String describeAttacker(final Damage damage) {
+        final Entity attacker = ((EntityDamageByEntityEvent) damage.event).getDamager();
+        final String attackerName = this.describeEntity(attacker);
+
+        String weapon = null;
+        if (damage.sourceItem != null) {
+            if (damage.sourceItem.getType() == Material.AIR) {
+                weapon = this.translator.itemDefaults.get(attacker.getType());
+            } else {
+                weapon = this.translator.formatItem(damage.sourceItem);
+            }
+        }
+
+        if (weapon == null || this.translator.itemFormat == null) return attackerName;
+
+        return String.format(this.translator.itemFormat, attackerName, weapon);
     }
 
 }
