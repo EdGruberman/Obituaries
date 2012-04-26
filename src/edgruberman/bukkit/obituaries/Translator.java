@@ -283,7 +283,7 @@ class Translator {
     public String formatItem(final ItemStack item) {
         String formatted = this.formatMaterial(item);
 
-        if (item.getType() == Material.POTION)
+        if (item.getType() == Material.POTION && item.getDurability() != PotionType.WATER.getDamageValue())
             formatted = this.formatPotion(Potion.fromItemStack(item));
 
         // TODO enumerate enchantments
