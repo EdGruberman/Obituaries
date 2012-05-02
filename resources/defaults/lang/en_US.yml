@@ -74,6 +74,7 @@ entities:
     MUSHROOM_COW: a mooshroom
     SPLASH_POTION: a splash potion
     SMALL_FIREBALL: a small fireball
+    ENDER_CRYSTAL: an ender crystal
 entitySubtypes:
     CREEPER_POWERED: an electrified creeper
     MINECART_STORAGE: a storage minecart
