@@ -23,7 +23,6 @@ class Damage {
         // Capture volatile information
         switch (event.getCause()) {
 
-        case BLOCK_EXPLOSION:
         case CONTACT:
             // Store block state as it could change between damage event and death event
             this.sourceBlock = ((EntityDamageByBlockEvent) event).getDamager().getState();
