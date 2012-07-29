@@ -1,4 +1,3 @@
-version: @VERSION@
 deaths: # 1 = Victim Display Name, 2 = Source
     BLOCK_EXPLOSION: '%1$s blew up in %2$s'
     CONTACT: '%1$s died from touching %2$s'
@@ -459,3 +458,4 @@ materials:
     'POTION:32': a thick potion
     'POTION:64': a mundane potion (extended)
     'POTION:8192': a mundane potion
+version: @VERSION@

@@ -56,8 +56,8 @@ class Coroner implements Listener {
         this.damages.put(damage.event.getEntity(), damage);
     }
 
-    @EventHandler(priority = EventPriority.LOW) // Before Formatter
-    public void onEntityDeath (final PlayerDeathEvent death) {
+    @EventHandler(priority = EventPriority.HIGH) // Before MessageFormatter
+    public void onPlayerDeath(final PlayerDeathEvent death) {
         // Create unknown damage report if none previously recorded
         if (!this.damages.containsKey(death.getEntity()))
             this.onEntityDamage(new EntityDamageEvent(death.getEntity(), DamageCause.CUSTOM, 0));
@@ -145,6 +145,9 @@ class Coroner implements Listener {
         case LIGHTNING:
             final Entity lightning = ((EntityDamageByEntityEvent) damage.event).getDamager();
             description = this.describeEntity(lightning);
+            break;
+
+        default:
             break;
 
         }
