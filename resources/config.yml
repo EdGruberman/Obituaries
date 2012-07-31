@@ -1,3 +1,5 @@
-language: en_US
 logLevel: INFO
+language: en_US
+messages:
+    reload: '-> Obituaries plugin §2reloaded'
 version: @VERSION@

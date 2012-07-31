@@ -1,12 +1,13 @@
 package edgruberman.bukkit.obituaries;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.logging.Handler;
@@ -16,41 +17,47 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import edgruberman.bukkit.obituaries.commands.Reload;
+
 public final class Main extends JavaPlugin {
 
-    private static final Version MINIMUM_CONFIGURATION = new Version("2.1.0");
+    private static final Version MINIMUM_CONFIGURATION = new Version("2.0.0");
+
+    public static Messenger messenger;
 
     private Coroner coroner = null;
 
     @Override
     public void onEnable() {
         this.reloadConfig();
+        Main.messenger = Messenger.load(this, "messages");
 
-        final Configuration language = this.loadConfig("lang/" + this.getConfig().getString("language") + ".yml", null);
+        final Configuration language = this.loadConfig(this.getConfig().getString("language") + ".yml", null);
         final Translator translator = new Translator(this, language);
         this.coroner = new Coroner(this, translator);
+
+        this.getCommand("obituaries:reload").setExecutor(new Reload(this));
     }
 
     @Override
     public void onDisable() {
         this.coroner.clear();
         this.coroner = null;
+        Main.messenger = null;
     }
 
     @Override
     public void reloadConfig() {
         this.saveDefaultConfig();
         super.reloadConfig();
+        this.setLogLevel(this.getConfig().getString("logLevel"));
 
         final Version version = new Version(this.getConfig().getString("version"));
-        if (version.compareTo(Main.MINIMUM_CONFIGURATION) >= 0) {
-            this.setLogLevel(this.getConfig().getString("logLevel"));
-            return;
-        }
+        if (version.compareTo(Main.MINIMUM_CONFIGURATION) >= 0) return;
 
         this.archiveConfig("config.yml", version);
         this.saveDefaultConfig();
-        super.reloadConfig();
+        this.reloadConfig();
     }
 
     @Override
@@ -69,6 +76,29 @@ public final class Main extends JavaPlugin {
         this.getLogger().warning("Archived configuration file \"" + existing.getPath() + "\" with version \"" + version + "\" to \"" + backup.getPath() + "\"");
     }
 
+    private void extractConfig(final String resource, final boolean replace) {
+        final Charset source = Charset.forName("UTF-8");
+        final Charset target = Charset.defaultCharset();
+        if (target.equals(source)) {
+            super.saveResource(resource, replace);
+            return;
+        }
+
+        final File config = new File(this.getDataFolder(), resource);
+        if (config.exists()) return;
+
+        final char[] cbuf = new char[1024]; int read;
+        try {
+            final Reader in = new BufferedReader(new InputStreamReader(this.getResource(resource), source));
+            final Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(config), target));
+            while((read = in.read(cbuf)) > 0) out.write(cbuf, 0, read);
+            out.close(); in.close();
+
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Could not extract configuration file \"" + resource + "\" to " + config.getPath() + "\";" + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     private Configuration loadConfig(final String resource, final Version required) {
         // Extract default if not existing
         this.extractConfig(resource, false);
@@ -85,29 +115,6 @@ public final class Main extends JavaPlugin {
 
         // Extract default and reload
         return this.loadConfig(resource, null);
-    }
-
-    private void extractConfig(final String resource, final boolean replace) {
-        final Charset source = Charset.forName("UTF-8");
-        final Charset target = Charset.defaultCharset();
-        if (target.equals(source)) {
-            super.saveResource(resource, replace);
-            return;
-        }
-
-        final File config = new File(this.getDataFolder(), resource);
-        if (config.exists()) return;
-
-        final byte[] buffer = new byte[1024]; int read;
-        try {
-            final InputStream in = new BufferedInputStream(this.getResource(resource));
-            final OutputStream out = new BufferedOutputStream(new FileOutputStream(config));
-            while((read = in.read(buffer)) > 0) out.write(target.encode(source.decode(ByteBuffer.wrap(buffer, 0, read))).array());
-            out.close(); in.close();
-
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Could not extract configuration file \"" + resource + "\" to " + config.getPath() + "\";" + e.getClass().getName() + ": " + e.getMessage());
-        }
     }
 
     private void setLogLevel(final String name) {

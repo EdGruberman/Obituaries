@@ -3,3 +3,11 @@ description: Describes player death events
 version: @VERSION@
 author: @AUTHOR@
 main: @MAIN@
+commands:
+    'obituaries:reload':
+        description: Reload Obituaries plugin
+        permission: obituaries.reload
+permissions:
+    obituaries.reload:
+        description: Can use reload command
+        default: op
