@@ -17,20 +17,22 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import edgruberman.bukkit.messaging.couriers.ConfigurationCourier;
+import edgruberman.bukkit.messaging.couriers.TimestampedConfigurationCourier;
 import edgruberman.bukkit.obituaries.commands.Reload;
 
 public final class Main extends JavaPlugin {
 
     private static final Version MINIMUM_CONFIGURATION = new Version("2.0.0");
 
-    public static Messenger messenger;
+    public static ConfigurationCourier courier;
 
     private Coroner coroner = null;
 
     @Override
     public void onEnable() {
         this.reloadConfig();
-        Main.messenger = Messenger.load(this, "messages");
+        Main.courier = new TimestampedConfigurationCourier(this, "messages");
 
         final Configuration language = this.loadConfig(this.getConfig().getString("language") + ".yml", null);
         final Translator translator = new Translator(this, language);
@@ -43,7 +45,7 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         this.coroner.clear();
         this.coroner = null;
-        Main.messenger = null;
+        Main.courier = null;
     }
 
     @Override
