@@ -17,9 +17,9 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import edgruberman.bukkit.messaging.couriers.ConfigurationCourier;
-import edgruberman.bukkit.messaging.couriers.TimestampedConfigurationCourier;
 import edgruberman.bukkit.obituaries.commands.Reload;
+import edgruberman.bukkit.obituaries.messaging.couriers.ConfigurationCourier;
+import edgruberman.bukkit.obituaries.messaging.couriers.TimestampedConfigurationCourier;
 
 public final class Main extends JavaPlugin {
 
