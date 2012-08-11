@@ -56,7 +56,7 @@ class Coroner implements Listener {
         this.damages.put(damage.event.getEntity(), damage);
     }
 
-    @EventHandler(priority = EventPriority.HIGH) // Before MessageFormatter
+    @EventHandler
     public void onPlayerDeath(final PlayerDeathEvent death) {
         // Create unknown damage report if none previously recorded
         if (!this.damages.containsKey(death.getEntity()))
@@ -72,7 +72,7 @@ class Coroner implements Listener {
         death.setDeathMessage(message);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent quit) {
         this.remove(quit.getPlayer());
     }
