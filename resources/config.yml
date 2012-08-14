@@ -1,5 +1,4 @@
 logLevel: INFO
 language: en_US
-messages:
-    reload: '-> Obituaries plugin §2reloaded'
+reload: '-> {1} plugin §2reloaded' # 1 = Plugin
 version: @VERSION@

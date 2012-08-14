@@ -1,14 +1,14 @@
-package edgruberman.bukkit.obituaries.messaging;
+package edgruberman.bukkit.simpleregions.messaging;
 
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
-import edgruberman.bukkit.obituaries.messaging.messages.Confirmation;
-import edgruberman.bukkit.obituaries.messaging.recipients.PermissionSubscribers;
-import edgruberman.bukkit.obituaries.messaging.recipients.Sender;
-import edgruberman.bukkit.obituaries.messaging.recipients.ServerPlayers;
-import edgruberman.bukkit.obituaries.messaging.recipients.WorldPlayers;
+import edgruberman.bukkit.simpleregions.messaging.messages.Confirmation;
+import edgruberman.bukkit.simpleregions.messaging.recipients.PermissionSubscribers;
+import edgruberman.bukkit.simpleregions.messaging.recipients.Sender;
+import edgruberman.bukkit.simpleregions.messaging.recipients.ServerPlayers;
+import edgruberman.bukkit.simpleregions.messaging.recipients.WorldPlayers;
 
 /**
  * handles message delivery and logging

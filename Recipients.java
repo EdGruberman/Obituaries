@@ -1,6 +1,6 @@
-package edgruberman.bukkit.obituaries.messaging;
+package edgruberman.bukkit.simpleregions.messaging;
 
-import edgruberman.bukkit.obituaries.messaging.messages.Confirmation;
+import edgruberman.bukkit.simpleregions.messaging.messages.Confirmation;
 
 /**
  * collection of one or more message targets

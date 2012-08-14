@@ -1,4 +1,4 @@
-package edgruberman.bukkit.obituaries.messaging;
+package edgruberman.bukkit.simpleregions.messaging;
 
 import java.text.MessageFormat;
 

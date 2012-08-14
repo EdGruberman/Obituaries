@@ -23,7 +23,7 @@ import edgruberman.bukkit.obituaries.messaging.couriers.TimestampedConfiguration
 
 public final class Main extends JavaPlugin {
 
-    private static final Version MINIMUM_CONFIGURATION = new Version("2.0.0");
+    private static final Version MINIMUM_CONFIGURATION = new Version("2.2.0");
 
     public static ConfigurationCourier courier;
 
@@ -32,7 +32,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         this.reloadConfig();
-        Main.courier = new TimestampedConfigurationCourier(this, "messages");
+        Main.courier = new TimestampedConfigurationCourier(this);
 
         final Configuration language = this.loadConfig(this.getConfig().getString("language") + ".yml", null);
         final Translator translator = new Translator(this, language);
@@ -102,20 +102,20 @@ public final class Main extends JavaPlugin {
     }
 
     private Configuration loadConfig(final String resource, final Version required) {
-        // Extract default if not existing
+        // extract default if not existing
         this.extractConfig(resource, false);
 
         final File existing = new File(this.getDataFolder(), resource);
         final Configuration config = YamlConfiguration.loadConfiguration(existing);
         if (required == null) return config;
 
-        // Verify required or later version
+        // verify required or later version
         final Version version = new Version(config.getString("version"));
         if (version.compareTo(required) >= 0) return config;
 
         this.archiveConfig(resource, version);
 
-        // Extract default and reload
+        // extract default and reload
         return this.loadConfig(resource, null);
     }
 
@@ -126,7 +126,7 @@ public final class Main extends JavaPlugin {
             this.getLogger().warning("Log level defaulted to " + level.getName() + "; Unrecognized java.util.logging.Level: " + name);
         }
 
-        // Only set the parent handler lower if necessary, otherwise leave it alone for other configurations that have set it
+        // only set the parent handler lower if necessary, otherwise leave it alone for other configurations that have set it
         for (final Handler h : this.getLogger().getParent().getHandlers())
             if (h.getLevel().intValue() > level.intValue()) h.setLevel(level);
 
