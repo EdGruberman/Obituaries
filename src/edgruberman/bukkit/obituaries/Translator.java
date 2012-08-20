@@ -19,9 +19,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-/**
- * Language manager.
- */
+/** language manager */
 class Translator {
 
     final Map<DamageCause, String> deaths = new HashMap<DamageCause, String>();
@@ -269,7 +267,9 @@ class Translator {
 
     public String formatPotion(final Potion potion) {
         String type = this.potionTypes.get(potion.getType());
-        if (type == null) type = potion.getType().name();
+        if (type == null)
+            if (potion.getType() != null) { type = potion.getType().name();
+            } else { type = String.valueOf(potion.getNameId()); }
         String formatted = String.format(this.potionFormatBase, "", type);
         if (potion.getLevel() > 1) formatted = String.format(this.potionFormatLevel, formatted, (potion.getLevel() == 2 ? "II" : potion.getLevel()));
         if (potion.hasExtendedDuration()) formatted = String.format(this.potionFormatExtended, formatted);
