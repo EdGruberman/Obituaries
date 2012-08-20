@@ -1,5 +1,6 @@
 package edgruberman.bukkit.obituaries;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -270,9 +271,9 @@ class Translator {
         if (type == null)
             if (potion.getType() != null) { type = potion.getType().name();
             } else { type = String.valueOf(potion.getNameId()); }
-        String formatted = String.format(this.potionFormatBase, "", type);
-        if (potion.getLevel() > 1) formatted = String.format(this.potionFormatLevel, formatted, (potion.getLevel() == 2 ? "II" : potion.getLevel()));
-        if (potion.hasExtendedDuration()) formatted = String.format(this.potionFormatExtended, formatted);
+        String formatted = MessageFormat.format(this.potionFormatBase, "", type);
+        if (potion.getLevel() > 1) formatted = MessageFormat.format(this.potionFormatLevel, formatted, (potion.getLevel() == 2 ? "II" : potion.getLevel()));
+        if (potion.hasExtendedDuration()) formatted = MessageFormat.format(this.potionFormatExtended, formatted);
         return formatted;
     }
 
@@ -288,7 +289,7 @@ class Translator {
 
         // TODO enumerate enchantments
         if (this.enchanted != null && item.getEnchantments().size() > 0)
-            formatted = String.format(this.enchanted, formatted);
+            formatted = MessageFormat.format(this.enchanted, formatted);
 
         return formatted;
     }
@@ -330,7 +331,7 @@ class Translator {
                 if (effects.length() != 0) effects += ", ";
                 effects += this.formatPotionEffect(effect);
             }
-            name = String.format(this.potionFormatBase, name, effects);
+            name = MessageFormat.format(this.potionFormatBase, name, effects);
         }
 
         if (name != null) return name;

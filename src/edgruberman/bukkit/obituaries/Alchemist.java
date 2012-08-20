@@ -1,5 +1,6 @@
 package edgruberman.bukkit.obituaries;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class Alchemist implements Listener {
 
                 final String potion = this.coroner.translator.formatName(splash.getPotion());
                 final String thrower = this.coroner.translator.formatName(splash.getPotion().getShooter());
-                final String thrown = String.format(this.coroner.translator.potionFormatThrown, potion, thrower);
+                final String thrown = MessageFormat.format(this.coroner.translator.potionFormatThrown, potion, thrower);
                 this.potions.put(affected, thrown);
             }
         }
@@ -49,7 +50,7 @@ public class Alchemist implements Listener {
         if (event.getItem() == null || event.getItem().getType() != Material.POTION) return;
 
         final String potion = this.coroner.translator.formatItem(event.getItem());
-        final String drank = String.format(this.coroner.translator.potionFormatDrunk, potion);
+        final String drank = MessageFormat.format(this.coroner.translator.potionFormatDrunk, potion);
         this.potions.put(event.getPlayer(), drank);
     }
 

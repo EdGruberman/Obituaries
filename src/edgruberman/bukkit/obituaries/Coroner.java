@@ -1,5 +1,6 @@
 package edgruberman.bukkit.obituaries;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,10 +22,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
-/**
- * Monitors damage and death events, examines death events and reports findings.
- * Coordinates activities between other investigation classes.
- */
+/** monitors damage and death events, examines death events and reports findings */
 class Coroner implements Listener {
 
     final Plugin plugin;
@@ -88,7 +86,7 @@ class Coroner implements Listener {
         final String format = this.translator.getDeathMessageFormat(kill.event.getCause());
         if (format == null) return null;
 
-        return String.format(format, this.translator.formatName(kill.event.getEntity()), this.describeSource(kill));
+        return MessageFormat.format(format, this.translator.formatName(kill.event.getEntity()), this.describeSource(kill));
     }
 
     private String describeSource(final Damage damage) {
@@ -173,7 +171,7 @@ class Coroner implements Listener {
         if (entity instanceof Tameable) {
             final AnimalTamer tamer = ((Tameable) entity).getOwner();
             if (tamer instanceof Entity && this.translator.owners.containsKey("Tameable"))
-                description = String.format(this.translator.owners.get("Tameable"), description, this.describeEntity((Entity) tamer));
+                description = MessageFormat.format(this.translator.owners.get("Tameable"), description, this.describeEntity((Entity) tamer));
         }
 
         if (entity instanceof Projectile && this.translator.owners.containsKey("Projectile")) {
@@ -184,12 +182,12 @@ class Coroner implements Listener {
             } else if (shooter instanceof Entity) {
                 shooterName = this.describeEntity(shooter);
             }
-            description = String.format(this.translator.owners.get("Projectile"), description, shooterName);
+            description = MessageFormat.format(this.translator.owners.get("Projectile"), description, shooterName);
         }
 
         // Vehicle
         if (!entity.isEmpty() && this.translator.owners.containsKey("Vehicle")) {
-            description = String.format(this.translator.owners.get("Vehicle"), description, this.describeEntity(entity.getPassenger()));
+            description = MessageFormat.format(this.translator.owners.get("Vehicle"), description, this.describeEntity(entity.getPassenger()));
         }
 
         return description;
@@ -210,7 +208,7 @@ class Coroner implements Listener {
 
         if (weapon == null || this.translator.itemFormat == null) return attackerName;
 
-        return String.format(this.translator.itemFormat, attackerName, weapon);
+        return MessageFormat.format(this.translator.itemFormat, attackerName, weapon);
     }
 
 }

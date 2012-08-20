@@ -1,4 +1,4 @@
-package edgruberman.bukkit.obituaries;
+package edgruberman.bukkit.obituaries.util;
 
 
 import java.util.ArrayList;

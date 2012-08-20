@@ -1,42 +1,42 @@
 deaths: # 1 = Victim Display Name, 2 = Source
-    BLOCK_EXPLOSION: '%1$s blew up in %2$s'
-    CONTACT: '%1$s died from touching %2$s'
-    CUSTOM: '%1$s died'
-    DROWNING: '%1$s drowned'
-    ENTITY_ATTACK: '%1$s was slain by %2$s'
-    ENTITY_EXPLOSION: '%1$s blew up with %2$s'
-    FALL: '%1$s hit the ground too hard after falling %2$s blocks'
-    FIRE: '%1$s went up in flames'
-    FIRE_TICK: '%1$s burned to death after being lit by %2$s'
-    LAVA: '%1$s tried to swim in lava'
-    LIGHTNING: '%1$s died from being struck by %2$s'
-    MAGIC: '%1$s was killed by %2$s'
-    POISON: '%1$s was poisoned'
-    PROJECTILE: '%1$s was shot by %2$s'
-    STARVATION: '%1$s starved to death'
-    SUFFOCATION: '%1$s suffocated in %2$s'
-    SUICIDE: '%1$s committed suicide'
-    VOID: '%1$s fell out of the world'
+    BLOCK_EXPLOSION: '{0} blew up in {1}'
+    CONTACT: '{0} died from touching {1}'
+    CUSTOM: '{0} died'
+    DROWNING: '{0} drowned'
+    ENTITY_ATTACK: '{0} was slain by {1}'
+    ENTITY_EXPLOSION: '{0} blew up with {1}'
+    FALL: '{0} hit the ground too hard after falling {1} blocks'
+    FIRE: '{0} went up in flames'
+    FIRE_TICK: '{0} burned to death after being lit by {1}'
+    LAVA: '{0} tried to swim in lava'
+    LIGHTNING: '{0} died from being struck by {1}'
+    MAGIC: '{0} was killed by {1}'
+    POISON: '{0} was poisoned'
+    PROJECTILE: '{0} was shot by {1}'
+    STARVATION: '{0} starved to death'
+    SUFFOCATION: '{0} suffocated in {1}'
+    SUICIDE: '{0} committed suicide'
+    VOID: '{0} fell out of the world'
 item:
-    format: '%1$s with %2$s' # 1 = Entity Display Name, 2 = Item
+    format: '{0} with {1}' # 1 = Entity Display Name, 2 = Item
     defaults:
         PLAYER: 'a bare fist'
 potion:
     format:
-        base: '%1$s of %2$s' # 1 = Potion Type (POTION(Item) = ""/SPLASH_POTION(Entity)), 2 = Effect
-        level: '%1$s %2$s' # 1 = Formatted Base, 2 = Level
-        extended: '%1$s (extended)' # 1 = Formatted Base
-        thrown: '%2$s throwing %1$s' # 1 = Formatted Base, 2 = Thrower Name
-        drunk: 'drinking a potion%1$s' # 1 = Formatted Base
+        base: '{0} of {1}' # 1 = Potion Type, 2 = Effect
+        level: '{0} {1}' # 1 = Formatted Base, 2 = Level
+        extended: '{0} (extended)' # 1 = Formatted Base
+        thrown: '{1} throwing {0}' # 1 = Formatted Base, 2 = Thrower Name
+        drunk: 'drinking a potion{0}' # 1 = Formatted Base
     effects:
         HARM: harming
     types:
         INSTANT_DAMAGE: harming
-enchanted: '%1$s that is enchanted' # 1 = Material
+enchanted: '{0} that is enchanted' # 1 = Material
 owners:
-    Projectile: '%2$s with %1$s'
-    Tameable: '%1$s tamed by %2$s'
-    Vehicle: '%1$s ridden by %2$s'
+    Projectile: '{1} with {0}'
+    Tameable: '{0} tamed by {1}'
+    Vehicle: '{0} ridden by {1}'
 entities:
     CHICKEN: a chicken
     COW: a cow

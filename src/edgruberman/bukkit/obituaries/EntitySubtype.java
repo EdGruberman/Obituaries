@@ -8,7 +8,7 @@ import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.StorageMinecart;
 
-enum EntitySubtype {
+public enum EntitySubtype {
 
       SLIME_BIG(EntityType.SLIME)
     , SLIME_SMALL(EntityType.SLIME)
@@ -21,7 +21,7 @@ enum EntitySubtype {
     , MINECART_POWERED(EntityType.MINECART)
     ;
 
-    static EntitySubtype of(final Entity entity) {
+    public static EntitySubtype of(final Entity entity) {
         for (final EntitySubtype subtype : EntitySubtype.values())
             if (subtype.matches(entity)) return subtype;
 
@@ -34,7 +34,7 @@ enum EntitySubtype {
         this.type = type;
     }
 
-    boolean matches(final Entity entity) {
+    public boolean matches(final Entity entity) {
         if (entity.getType() != this.type) return false;
 
         switch (this) {
@@ -70,4 +70,5 @@ enum EntitySubtype {
 
         return false;
     }
+
 }

@@ -8,9 +8,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Capture volatile information at time of damage.
- */
+/** capture volatile information at time of damage */
 class Damage {
 
     final EntityDamageEvent event;

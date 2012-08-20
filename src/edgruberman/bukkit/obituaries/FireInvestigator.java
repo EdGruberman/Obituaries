@@ -17,9 +17,7 @@ import org.bukkit.event.entity.EntityCombustByBlockEvent;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
 
-/**
- * Identify and track source of combustion.
- */
+/** identify and track source of combustion */
 class FireInvestigator implements Listener {
 
     private final Coroner coroner;
@@ -125,9 +123,7 @@ class FireInvestigator implements Listener {
         return false;
     }
 
-    /**
-     * Materials that can set a player on fire.
-     */
+    /** materials that can set a player on fire */
     private final static Set<Material> COMBUSTIBLES = new HashSet<Material>(Arrays.asList(new Material[] {
               Material.LAVA
             , Material.STATIONARY_LAVA
