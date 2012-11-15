@@ -1,8 +1,8 @@
-name: @NAME@
-description: Describes player death events
+name: Obituaries
 version: @VERSION@
-author: @AUTHOR@
-main: @MAIN@
+description: Describes player death events
+author: EdGruberman (ed@rjump.com)
+main: edgruberman.bukkit.obituaries.Main
 commands:
     'obituaries:reload':
         description: Reload Obituaries plugin
