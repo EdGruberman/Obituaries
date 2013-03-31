@@ -21,6 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 import edgruberman.bukkit.obituaries.util.EntitySubtype;
+import edgruberman.bukkit.obituaries.util.MaterialIdData;
 
 /** language manager */
 class Translator {
@@ -213,47 +214,33 @@ class Translator {
         if (config == null) return;
 
         for (final String key : config.getKeys(false)) {
-            String name = key;
-
-            // Separate and parse damage value if it exists
-            Short damage = null;
-            if (name.contains(":")) {
-                try {
-                    damage = Short.parseShort(name.split(":")[1]);
-                } catch (final NumberFormatException e) {
-                    this.plugin.getLogger().warning("Unable to parse damage value " + config.getCurrentPath() + ": " + key + "; " + e.getMessage());
-                    continue;
-                }
-
-                name = name.split(":")[0];
-            }
-
-            // Identify material by name
-            final Material material = Material.getMaterial(name);
-            if (material == null) {
-                this.plugin.getLogger().warning("Unable to identify Material " + config.getCurrentPath() + ": " + key);
+            MaterialIdData parsed;
+            try {
+                parsed = MaterialIdData.parse(key);
+            } catch (final IllegalArgumentException e) {
+                this.plugin.getLogger().warning("Unrecognizable value at " + config.getCurrentPath() + ": " + key + "; " + e);
                 continue;
             }
 
-            // Store the language text
-            if (!this.materials.containsKey(material.getId())) this.materials.put(material.getId(), new HashMap<Short, String>());
-            this.materials.get(material.getId()).put(damage, config.getString(key));
+            // store the language text
+            if (!this.materials.containsKey(parsed.getId())) this.materials.put(parsed.getId(), new HashMap<Short, String>());
+            this.materials.get(parsed.getId()).put(parsed.getData(), config.getString(key));
         }
 
         this.plugin.getLogger().config(this.materials.size() + " material name(s) loaded");
     }
 
-    public String formatMaterial(final int id, final Short damage) {
+    public String formatMaterial(final int id, final Short data) {
         final Map<Short, String> values = this.materials.get(id);
 
         // When no entry exists for this material id at all, return null
         if (values == null) return null;
 
         // When no specific damage value override exists, return the default material name (null if there is no default)
-        if (!values.containsKey(damage)) return values.get(null);
+        if (!values.containsKey(data)) return values.get(null);
 
         // Otherwise return the specific damage value override (which could be null itself)
-        return values.get(damage);
+        return values.get(data);
     }
 
     public String formatMaterial(final Material material) {
