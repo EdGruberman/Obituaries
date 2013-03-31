@@ -1,11 +1,9 @@
 package edgruberman.bukkit.obituaries.messaging;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -14,18 +12,12 @@ import org.bukkit.plugin.Plugin;
  * handles message delivery and logging
  *
  * @author EdGruberman (ed@rjump.com)
- * @version 2.0.0
+ * @version 6.0.1
  */
 public class Courier {
 
     protected final Plugin plugin;
     protected final boolean timestamp;
-
-    /** prepends a timestamp parameter for all messages */
-    public Courier(final Plugin plugin) {
-        this.plugin = plugin;
-        this.timestamp = true;
-    }
 
     protected Courier(final Courier.Factory parameters) {
         this.plugin = parameters.plugin;
@@ -36,77 +28,70 @@ public class Courier {
         return this.plugin;
     }
 
-    /** true if all messages will have their arguments automatically prepended with the current date/time */
+    /** @return true if all messages will have their arguments automatically prepended with the current date/time */
     public boolean getTimestamp() {
         return this.timestamp;
     }
 
-    /** Message construction (timestamps prepended if configured) */
-    public List<Message> draft(final String key, final Object... arguments) {
-        if (key == null) return Collections.emptyList();
-
-        final Message.Factory factory = Message.Factory.create(key, arguments);
-        if (this.timestamp) factory.timestamp();
-        final List<Message> messages = new ArrayList<Message>();
-        messages.add(factory.build());
-        return messages;
+    /** format a pattern with supplied arguments */
+    public String formatMessage(final String pattern, final Object... arguments) {
+        return MessageFormat.format(pattern, arguments);
     }
 
-    /** deliver messages to recipients and record log entry for each message (this will not timestamp the message) */
-    public void submit(final Recipients recipients, final List<Message> messages) {
-        for (final Message message : messages) {
-            final Confirmation confirmation;
-            try {
-                confirmation = recipients.deliver(message);
+    /**
+     * preliminary Message construction before formatting for target recipient (timestamp argument prepended if configured)
+     * @param pattern message text that contains format elements
+     */
+    public Message draft(final String pattern, final Object... arguments) {
+        final Message.Factory factory = Message.create(pattern, arguments);
+        if (this.timestamp) factory.timestamp();
+        return factory.build();
+    }
 
-            } catch (final RuntimeException e) {
-                this.plugin.getLogger().warning("Error submitting message for delivery; pattern: \"" + message.original + "\"; " + e);
-                continue;
-            }
-
+    /** deliver message to recipients and record log entry (this will not timestamp the message) */
+    public void submit(final Recipients recipients, final Message message) {
+        try {
+            final Confirmation confirmation = recipients.deliver(message);
             this.plugin.getLogger().log(confirmation.toLogRecord());
+
+        } catch (final RuntimeException e) {
+            this.plugin.getLogger().log(Level.WARNING, "Error submitting message for delivery; pattern: \"{0}\"{1}; {2}", new Object[] { message.original, ChatColor.RESET, e });
         }
     }
 
-    /** deliver single message to recipients and record log entry (this will not timestamp the message) */
-    public void submit(final Recipients recipients, final Message message) {
-        this.submit(recipients, Arrays.asList(message));
-    }
-
     /** deliver message to individual player */
-    public void send(final CommandSender sender, final String key, final Object... arguments) {
-        final Recipients recipients = new Sender(sender);
-        final List<Message> messages = this.draft(key, arguments);
-        this.submit(recipients, messages);
+    public void sendMessage(final CommandSender sender, final String pattern, final Object... arguments) {
+        final Recipients recipients = new Individual(sender);
+        final Message message = this.draft(pattern, arguments);
+        this.submit(recipients, message);
     }
 
     /** deliver message to all players on server */
-    public void broadcast(final String key, final Object... arguments) {
+    public void broadcastMessage(final String pattern, final Object... arguments) {
         final Recipients recipients = new ServerPlayers();
-        final List<Message> messages = this.draft(key, arguments);
-        this.submit(recipients, messages);
+        final Message message = this.draft(pattern, arguments);
+        this.submit(recipients, message);
     }
 
     /** deliver message to players in a world */
-    public void world(final World world, final String key, final Object... arguments) {
+    public void worldMessage(final World world, final String pattern, final Object... arguments) {
         final Recipients recipients = new WorldPlayers(world);
-        final List<Message> messages = this.draft(key, arguments);
-        this.submit(recipients, messages);
+        final Message message = this.draft(pattern, arguments);
+        this.submit(recipients, message);
     }
 
     /** deliver message to players with a permission */
-    public void publish(final String permission, final String key, final Object... arguments) {
+    public void publishMessage(final String permission, final String pattern, final Object... arguments) {
         final Recipients recipients = new PermissionSubscribers(permission);
-        final List<Message> messages = this.draft(key, arguments);
-        this.submit(recipients, messages);
-    }
-
-    /** format a pattern with supplied arguments */
-    public String format(final String key, final Object... arguments) {
-        return MessageFormat.format(key, arguments);
+        final Message message = this.draft(pattern, arguments);
+        this.submit(recipients, message);
     }
 
 
+
+    public static Factory create(final Plugin plugin) {
+        return Factory.create(plugin);
+    }
 
     public static class Factory {
 
@@ -115,8 +100,8 @@ public class Courier {
             return new Factory(plugin);
         }
 
-        public Plugin plugin;
-        public boolean timestamp;
+        protected final Plugin plugin;
+        protected boolean timestamp;
 
         protected Factory(final Plugin plugin) {
             this.plugin = plugin;

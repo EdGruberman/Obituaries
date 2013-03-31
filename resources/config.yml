@@ -1,4 +1,3 @@
-logLevel: INFO
+log-level: INFO
 language: en_US
-reload: '-> {1} plugin §2reloaded' # 1 = Plugin
 version: @VERSION@

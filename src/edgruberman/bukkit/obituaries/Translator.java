@@ -20,6 +20,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
+import edgruberman.bukkit.obituaries.util.EntitySubtype;
+
 /** language manager */
 class Translator {
 
@@ -194,7 +196,7 @@ class Translator {
         for (final String name : config.getKeys(false)) {
             EntitySubtype subtype;
             try {
-                subtype = EntitySubtype.valueOf(name);
+                subtype = EntitySubtype.of(name);
             } catch (final IllegalArgumentException e) {
                 this.plugin.getLogger().warning("Unable to identify EntitySubtype " + config.getCurrentPath() + ": " + name + "; " + e.getMessage());
                 continue;
