@@ -26,16 +26,14 @@ import org.bukkit.plugin.Plugin;
 class Coroner implements Listener {
 
     final Plugin plugin;
-    final Translator translator;
     final FireInvestigator investigator;
     final Alchemist alchemist;
     final Map<Entity, Damage> damages = new HashMap<Entity, Damage>();
 
-    Coroner (final Plugin plugin, final Translator translator) {
+    Coroner (final Plugin plugin) {
         this.plugin = plugin;
-        this.translator = translator;
         this.investigator = new FireInvestigator(this);
-        this.alchemist = new Alchemist(this);
+        this.alchemist = new Alchemist(plugin);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -83,10 +81,10 @@ class Coroner implements Listener {
 
     private String describeDeath(final Entity entity) {
         final Damage kill = this.damages.get(entity);
-        final String format = this.translator.getDeathMessageFormat(kill.event.getCause());
+        final String format = Main.courier.format("damage-causes." + kill.event.getCause().name());
         if (format == null) return null;
 
-        return MessageFormat.format(format, this.translator.formatName(kill.event.getEntity()), this.describeSource(kill));
+        return MessageFormat.format(format, Translator.describeEntity(kill.event.getEntity()), this.describeSource(kill));
     }
 
     private String describeSource(final Damage damage) {
@@ -98,30 +96,30 @@ class Coroner implements Listener {
         case BLOCK_EXPLOSION:
             if (damage.sourceBlock == null) {
                 // Possibility might exist in CraftBukkit to return a null block for a TNT explosion
-                description = this.translator.formatMaterial(Material.TNT);
+                description = Translator.formatMaterial(Material.TNT);
             } else {
-                description = this.translator.formatMaterial(damage.sourceBlock);
+                description = Translator.formatMaterial(damage.sourceBlock);
             }
             break;
 
         // Material
         case CONTACT:
         case SUFFOCATION:
-            description = this.translator.formatMaterial(damage.sourceBlock);
+            description = Translator.formatMaterial(damage.sourceBlock);
             break;
 
         case ENTITY_EXPLOSION: // Entity
             final Entity exploder = ((EntityDamageByEntityEvent) damage.event).getDamager();
-            description = this.describeEntity(exploder);
+            description = this.describeKiller(exploder);
             break;
 
         case ENTITY_ATTACK: // Weapon
-            description = this.describeAttacker(damage);
+            description = this.describeDamager(damage);
             break;
 
         case PROJECTILE: // Shooter
             final Entity projectile = ((EntityDamageByEntityEvent) damage.event).getDamager();
-            description = this.describeEntity(projectile);
+            description = this.describeKiller(projectile);
             break;
 
         // Potion effects
@@ -142,7 +140,7 @@ class Coroner implements Listener {
         // Lightning
         case LIGHTNING:
             final Entity lightning = ((EntityDamageByEntityEvent) damage.event).getDamager();
-            description = this.describeEntity(lightning);
+            description = this.describeKiller(lightning);
             break;
 
         default:
@@ -165,50 +163,50 @@ class Coroner implements Listener {
      *   Arrow = EdGruberman with an arrow
      *   Fireball = a ghast with a fireball
      */
-    String describeEntity(final Entity entity) {
-        String description = this.translator.formatName(entity);
+    String describeKiller(final Entity killer) {
+        String description = Translator.describeEntity(killer);
 
-        if (entity instanceof Tameable) {
-            final AnimalTamer tamer = ((Tameable) entity).getOwner();
-            if (tamer instanceof Entity && this.translator.owners.containsKey("Tameable"))
-                description = MessageFormat.format(this.translator.owners.get("Tameable"), description, this.describeEntity((Entity) tamer));
+        if (killer instanceof Tameable) {
+            final AnimalTamer tamer = ((Tameable) killer).getOwner();
+            if (tamer instanceof Entity) {
+                description = Main.courier.format("owners.Tameable", description, this.describeKiller((Entity) tamer));
+            }
         }
 
-        if (entity instanceof Projectile && this.translator.owners.containsKey("Projectile")) {
-            final LivingEntity shooter = ((Projectile) entity).getShooter();
+        if (killer instanceof Projectile) {
+            final LivingEntity shooter = ((Projectile) killer).getShooter();
             String shooterName = null;
             if (shooter == null) {
-                shooterName = this.translator.formatMaterial(Material.DISPENSER);
+                shooterName = Translator.formatMaterial(Material.DISPENSER);
             } else if (shooter instanceof Entity) {
-                shooterName = this.describeEntity(shooter);
+                shooterName = this.describeKiller(shooter);
             }
-            description = MessageFormat.format(this.translator.owners.get("Projectile"), description, shooterName);
+            description = Main.courier.format("owners.Projectile", description, shooterName);
         }
 
         // Vehicle
-        if (!entity.isEmpty() && this.translator.owners.containsKey("Vehicle")) {
-            description = MessageFormat.format(this.translator.owners.get("Vehicle"), description, this.describeEntity(entity.getPassenger()));
+        if (!killer.isEmpty()) {
+            description = Main.courier.format("owners.Vehicle", description, this.describeKiller(killer.getPassenger()));
         }
 
         return description;
     }
 
-    private String describeAttacker(final Damage damage) {
-        final Entity attacker = ((EntityDamageByEntityEvent) damage.event).getDamager();
-        final String attackerName = this.describeEntity(attacker);
+    private String describeDamager(final Damage damage) {
+        final Entity source = ((EntityDamageByEntityEvent) damage.event).getDamager();
+        final String damager = this.describeKiller(source);
 
         String weapon = null;
         if (damage.sourceItem != null) {
             if (damage.sourceItem.getType() == Material.AIR) {
-                weapon = this.translator.itemDefaults.get(attacker.getType());
+                weapon = Main.courier.format("item.defaults." + source.getType().name());
             } else {
-                weapon = this.translator.formatItem(damage.sourceItem);
+                weapon = Translator.formatItem(damage.sourceItem);
             }
         }
 
-        if (weapon == null || this.translator.itemFormat == null) return attackerName;
-
-        return MessageFormat.format(this.translator.itemFormat, attackerName, weapon);
+        final String result = Main.courier.format("item.format", damager, weapon);
+        return ( result != null && weapon != null ? result : damager );
     }
 
 }

@@ -1,4 +1,4 @@
-deaths: # 1 = Victim Display Name, 2 = Source
+damage-causes: # 1 = Victim Display Name, 2 = Source
   BLOCK_EXPLOSION: '{0} blew up in {1}'
   CONTACT: '{0} died from touching {1}'
   CUSTOM: '{0} died'
@@ -22,22 +22,21 @@ item:
   defaults:
     PLAYER: 'a bare fist'
 potion:
-  format:
-    base: '{0} of {1}' # 1 = Potion Type, 2 = Effect
-    level: '{0} {1}' # 1 = Formatted Base, 2 = Level
-    extended: '{0} (extended)' # 1 = Formatted Base
-    thrown: '{1} throwing {0}' # 1 = Formatted Base, 2 = Thrower Name
-    drunk: 'drinking a potion{0}' # 1 = Formatted Base
-  effects:
-    HARM: harming
+  base: '{0} of {1}' # 1 = Potion Type, 2 = Effect
+  level: '{0} {1}' # 1 = Formatted Base, 2 = Level
+  extended: '{0} (extended)' # 1 = Formatted Base
+  thrown: '{1} throwing {0}' # 1 = Formatted Base, 2 = Thrower Name
+  drunk: 'drinking a potion{0}' # 1 = Formatted Base
   types:
     INSTANT_DAMAGE: harming
+effects:
+    HARM: harming
 enchanted: '{0} that is enchanted' # 1 = Material
 owners:
   Projectile: '{1} with {0}'
   Tameable: '{0} tamed by {1}'
   Vehicle: '{0} ridden by {1}'
-entities:
+entity-types:
   CHICKEN: a chicken
   COW: a cow
   CREEPER: a creeper
@@ -75,7 +74,6 @@ entities:
   SMALL_FIREBALL: a small fireball
   ENDER_CRYSTAL: an ender crystal
   IRON_GOLEM: an iron golem
-entitySubtypes:
   CREEPER_POWERED: an electrified creeper
   MINECART_STORAGE: a storage minecart
   MINECART_POWERED: a powered minecart

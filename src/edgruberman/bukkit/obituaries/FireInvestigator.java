@@ -50,7 +50,7 @@ class FireInvestigator implements Listener {
     private void recordCombuster(final EntityCombustEvent event) {
         if (event instanceof EntityCombustByEntityEvent) {
             final EntityCombustByEntityEvent byEntity = (EntityCombustByEntityEvent) event;
-            this.combusters.put(event.getEntity(), this.coroner.describeEntity(byEntity.getCombuster()));
+            this.combusters.put(event.getEntity(), this.coroner.describeKiller(byEntity.getCombuster()));
             return;
         }
 
@@ -86,7 +86,7 @@ class FireInvestigator implements Listener {
                 return;
 
         // Nothing identified, assume basic fire caused combustion
-        this.combusters.put(event.getEntity(), this.coroner.translator.formatMaterial(Material.FIRE));
+        this.combusters.put(event.getEntity(), Translator.formatMaterial(Material.FIRE));
     }
 
     private static Double closestAdjustOnAxis(final double coord) {
@@ -99,14 +99,14 @@ class FireInvestigator implements Listener {
     private boolean identifyCombuster(final Location location, final Entity entity) {
         // Check foot block
         if (FireInvestigator.isCombustible(location)) {
-            this.combusters.put(entity, this.coroner.translator.formatMaterial(location.getBlock()));
+            this.combusters.put(entity, Translator.formatMaterial(location.getBlock()));
             return true;
         }
 
         // Check head block
         location.add(0, 1, 0);
         if (FireInvestigator.isCombustible(location)) {
-            this.combusters.put(entity, this.coroner.translator.formatMaterial(location.getBlock()));
+            this.combusters.put(entity, Translator.formatMaterial(location.getBlock()));
             return true;
         }
 
@@ -115,7 +115,7 @@ class FireInvestigator implements Listener {
         if (fPartY > (2d - 1.62d)) {
             location.add(0, 1, 0);
             if (FireInvestigator.isCombustible(location)) {
-                this.combusters.put(entity, this.coroner.translator.formatMaterial(location.getBlock()));
+                this.combusters.put(entity, Translator.formatMaterial(location.getBlock()));
                 return true;
             }
         }

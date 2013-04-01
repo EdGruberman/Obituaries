@@ -24,8 +24,7 @@ public final class Main extends CustomPlugin {
         final Configuration language = this.loadConfig(this.getConfig().getString("language") + ".yml");
         Main.courier = ConfigurationCourier.Factory.create(this).setBase(language).setFormatCode("format-code").build();
 
-        final Translator translator = new Translator(this, language);
-        this.coroner = new Coroner(this, translator);
+        this.coroner = new Coroner(this);
 
         this.getCommand("obituaries:reload").setExecutor(new Reload(this));
     }

@@ -1,6 +1,5 @@
 package edgruberman.bukkit.obituaries;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,17 +12,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Alchemist implements Listener {
 
-    private final Coroner coroner;
     private final Map<Entity, String> potions = new HashMap<Entity, String>();
 
-    Alchemist(final Coroner coroner) {
-        this.coroner = coroner;
-        coroner.plugin.getServer().getPluginManager().registerEvents(this, coroner.plugin);
+    Alchemist(final Plugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -34,9 +32,9 @@ public class Alchemist implements Listener {
             for (final Entity affected : splash.getAffectedEntities()) {
                 if (!(affected instanceof Player)) continue;
 
-                final String potion = this.coroner.translator.formatName(splash.getPotion());
-                final String thrower = this.coroner.translator.formatName(splash.getPotion().getShooter());
-                final String thrown = MessageFormat.format(this.coroner.translator.potionFormatThrown, potion, thrower);
+                final String potion = Translator.describeEntity(splash.getPotion());
+                final String thrower = Translator.describeEntity(splash.getPotion().getShooter());
+                final String thrown = Main.courier.format("potion.thrown", potion, thrower);
                 this.potions.put(affected, thrown);
             }
         }
@@ -49,8 +47,8 @@ public class Alchemist implements Listener {
 
         if (event.getItem() == null || event.getItem().getType() != Material.POTION) return;
 
-        final String potion = this.coroner.translator.formatItem(event.getItem());
-        final String drank = MessageFormat.format(this.coroner.translator.potionFormatDrunk, potion);
+        final String potion = Translator.formatItem(event.getItem());
+        final String drank = Main.courier.format("potion.drunk", potion);
         this.potions.put(event.getPlayer(), drank);
     }
 
