@@ -1,57 +1,92 @@
 package edgruberman.bukkit.obituaries;
 
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-/** capture volatile information at time of damage */
-class Damage {
+import edgruberman.bukkit.obituaries.util.JoinList;
 
-    final EntityDamageEvent event;
-    final BlockState sourceBlock;
-    final ItemStack sourceItem;
+public class Damage {
 
-    Damage(final EntityDamageEvent event) {
-        this.event = event;
+    private static final Map<DamageCause, Class<? extends Damage>> registered = new HashMap<DamageCause, Class<? extends Damage>>();
 
-        // Capture volatile information
-        switch (event.getCause()) {
+    public static void register(final DamageCause cause, final Class<? extends Damage> clazz) {
+        Damage.registered.put(cause, clazz);
+    }
 
-        case CONTACT:
-            // Store block state as it could change between damage event and death event
-            this.sourceBlock = ((EntityDamageByBlockEvent) event).getDamager().getState();
-            this.sourceItem = null;
-            break;
+    static Damage create(final Coroner coroner, final EntityDamageEvent damage) throws IllegalArgumentException, SecurityException, InstantiationException
+            , IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Class<? extends Damage> clazz = Damage.registered.get(damage.getCause());
+        if (clazz == null) clazz = Damage.class;
+        return clazz.getConstructor(Coroner.class, EntityDamageEvent.class).newInstance(coroner, damage);
+    }
 
-        case SUFFOCATION:
-            // Identify current block at player's top half since player model will drop to floor before death
-            final Player victim = (Player) event.getEntity();
-            this.sourceBlock = victim.getEyeLocation().getBlock().getState();
-            this.sourceItem = null;
-            break;
 
-        case ENTITY_ATTACK:
-            // Death event could be thrown after source item is no longer in damager's hand
-            final Entity damager = ((EntityDamageByEntityEvent) event).getDamager();
-            if (damager instanceof Player) {
-                final Player damagerPlayer = (Player) damager;
-                this.sourceItem = damagerPlayer.getItemInHand().clone();
-            } else {
-                this.sourceItem = null;
-            }
-            this.sourceBlock = null;
-            break;
 
-        default:
-            this.sourceBlock = null;
-            this.sourceItem = null;
+    protected final Coroner coroner;
+    protected final int recorded;
+    protected final DamageCause cause;
 
+    public Damage(final Coroner coroner, final EntityDamageEvent event) {
+        this.coroner = coroner;
+        this.recorded = event.getEntity().getTicksLived();
+        this.cause = event.getCause();
+    }
+
+    /** @return age of victim when damage occurred (ticks) */
+    public int getRecorded() {
+        return this.recorded;
+    }
+
+    public boolean isDamagerLiving() {
+        return false;
+    }
+
+    public DamageCause getCause() {
+        return this.cause;
+    }
+
+    public String describeAsKiller() {
+        return null;
+    }
+
+    public String describeAsAccomplice() {
+        return this.describeAsKiller();
+    }
+
+    public Object getDamager() {
+        return this.cause;
+    }
+
+    public String formatDeath() {
+        final String message = Main.courier.format("deaths." + this.cause.name(), Translator.describeEntity(this.coroner.getPlayer()), this.describeAsKiller());
+        return this.formatAccomplices(message);
+    }
+
+    // TODO list in order from who did most to least damage
+    protected String formatAccomplices(final String message) {
+        final List<Object> accomplices = new ArrayList<Object>();
+        final JoinList<String> descriptions = new JoinList<String>(Main.courier.getBase().getConfigurationSection("accomplices").getConfigurationSection("list"));
+
+        final Object killer = this.getDamager();
+        for (final Damage damage : this.coroner.getDamages()) {
+            final Object accomplice = damage.getDamager();
+            if (accomplice == null || !(accomplice instanceof UUID) || accomplice.equals(killer)) continue;
+            if (accomplices.contains(accomplice)) continue;
+            accomplices.add(accomplice);
+            final String description = damage.describeAsAccomplice();
+            if (description != null) descriptions.add(description);
         }
 
+        if (descriptions.size() == 0) return message;
+        final String formatted = Main.courier.format("accomplices.format", message, descriptions);
+        return ( formatted != null ? formatted : message );
     }
 
 }

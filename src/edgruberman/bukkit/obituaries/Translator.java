@@ -6,9 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
@@ -16,52 +18,62 @@ import org.bukkit.potion.PotionType;
 import edgruberman.bukkit.obituaries.util.EntitySubtype;
 import edgruberman.bukkit.obituaries.util.JoinList;
 
-class Translator {
+public class Translator {
 
     /** 0 = name, 1 = data */
     private static final String MATERIAL_DATA = "{0}/{1}";
 
-    public static String formatMaterial(final String name, final Short data) {
-        final String result = Main.courier.format("materials." + MessageFormat.format(Translator.MATERIAL_DATA, name, data));
-        if (result == null) Main.courier.format("materials." + name);
+    public static String describeMaterial(final String name, final Short data) {
+        final String specific = MessageFormat.format(Translator.MATERIAL_DATA, name, data);
+        String result = Main.courier.format("materials." + specific);
+        if (result == null) result = Main.courier.format("materials." + name);
+        if (result == null) result = ( data != null && data != 0 ? specific : name );
         return result;
     }
 
-    public static String formatMaterial(final Material material) {
-        return Translator.formatMaterial(material.name(), null);
+    public static String describeMaterial(final Material material) {
+        return Translator.describeMaterial(material.name(), null);
     }
 
-    public static String formatMaterial(final Block block) {
-        return Translator.formatMaterial(block.getType().name(), (short) block.getData());
+    public static String describeMaterial(final Material material, final byte data) {
+        return Translator.describeMaterial(material.name(), (short) data);
     }
 
-    public static String formatMaterial(final BlockState state) {
-        return Translator.formatMaterial(state.getType().name(), (short) state.getRawData());
+    public static String describeMaterial(final Block block) {
+        return Translator.describeMaterial(block.getType().name(), (short) block.getData());
     }
 
-    public static String formatMaterial(final ItemStack item) {
-        return Translator.formatMaterial(item.getType().name(), item.getDurability());
+    public static String describeMaterial(final BlockState state) {
+        return Translator.describeMaterial(state.getType().name(), (short) state.getRawData());
     }
 
-    public static String formatPotion(final Potion potion) {
-        String type = null;
+    public static String describeMaterial(final ItemStack item) {
+        return Translator.describeMaterial(item.getType().name(), item.getDurability());
+    }
+
+    public static String formatPotion(final String material, final Potion potion) {
+        String effect = null;
         if (potion.getType() != null) {
-            type = Main.courier.format("potion.types." + potion.getType().name());
-            if (type == null) type = potion.getType().name();
+            effect = Main.courier.format("potion.types." + potion.getType().name());
+            if (effect == null) effect = potion.getType().name();
         }
-        if (type == null) type = String.valueOf(potion.getNameId());
+        if (effect == null) effect = String.valueOf(potion.getNameId());
 
-        String formatted = Main.courier.format("potion.base", "", type);
-        if (potion.getLevel() > 1) formatted = Main.courier.format("potion.level", formatted, (potion.getLevel() == 2 ? "II" : potion.getLevel()));
+        String formatted = Main.courier.format("potion.base", material, effect);
+        if (potion.getLevel() > 1) formatted = Main.courier.format("potion.levels.format", formatted, Main.courier.format("potion.levels." + potion.getLevel()));
         if (potion.hasExtendedDuration()) formatted = Main.courier.format("potion.extended", formatted);
         return formatted;
     }
 
     public static String formatItem(final ItemStack item) {
-        String formatted = Translator.formatMaterial(item);
+        // custom display names override any other description
+        final ItemMeta meta = item.getItemMeta();
+        if (meta.hasDisplayName()) return Main.courier.format("weapon.custom", meta.getDisplayName());
+
+        String formatted = Translator.describeMaterial(item);
 
         if (item.getType() == Material.POTION && item.getDurability() != PotionType.WATER.getDamageValue())
-            formatted = Translator.formatPotion(Potion.fromItemStack(item));
+            formatted = Translator.formatPotion(formatted, Potion.fromItemStack(item));
 
         // TODO enumerate enchantments
         if (item.getEnchantments().size() > 0)
@@ -71,29 +83,25 @@ class Translator {
     }
 
     public static String describeEntity(final Entity entity) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player)
             return ((Player) entity).getDisplayName();
+
+        if (entity instanceof ThrownPotion)
+            return Translator.describeThrownPotion((ThrownPotion) entity);
+
+        if (entity instanceof FallingBlock) {
+            final FallingBlock fell = (FallingBlock) entity;
+            return Translator.describeMaterial(fell.getMaterial(), fell.getBlockData());
         }
 
-        String result = Translator.formatEntitySubtype(entity);
-        if (result == null) result = Translator.formatEntityType(entity);
-
-        if (entity instanceof ThrownPotion) {
-            final JoinList<String> effects = new JoinList<String>();
-            for (final PotionEffect effect : ((ThrownPotion) entity).getEffects()) {
-                final String pe = Main.courier.format("effects." + effect.getType().getName()); // TODO include level and duration
-                effects.add(( pe != null ? pe : effect.getType().getName() ));
-            }
-            result = Main.courier.format("potion.base", result, effects);
-        }
-
-        if (result != null) return result;
-
-        return entity.getType().name();
+        return Translator.describeEntityType(entity);
     }
 
-    private static String formatEntityType(final Entity entity) {
-        return Main.courier.format("entity-types." + entity.getType().name());
+    private static String describeEntityType(final Entity entity) {
+        String result = Translator.formatEntitySubtype(entity);
+        if (result == null) result = Main.courier.format("entities." + entity.getType().name());
+        if (result == null) result = entity.getType().name();
+        return result;
     }
 
     private static String formatEntitySubtype(final Entity entity) {
@@ -104,7 +112,23 @@ class Translator {
             return null;
         }
 
-        return Main.courier.format("entity-types." + subtype.getName());
+        return Main.courier.format("entities." + subtype.getName());
+    }
+
+    private static String describeThrownPotion(final ThrownPotion thrown) {
+        final String type = Translator.describeEntityType(thrown);
+
+        final JoinList<String> effects = new JoinList<String>();
+        for (final PotionEffect effect : thrown.getEffects()) {
+            String pe = Main.courier.format("effects." + effect.getType().getName());
+            pe = Main.courier.format("potion.levels.format", pe, Main.courier.format("potion.levels." + (effect.getAmplifier() + 1)));
+            effects.add(( pe != null ? pe : effect.getType().getName() ));
+        }
+        final String potion = Main.courier.format("potion.base", type, effects);
+
+        final String thrower = Translator.describeEntity(thrown.getShooter());
+
+        return Main.courier.format("potion.thrown", ( potion == null ? type : potion ), thrower);
     }
 
 }

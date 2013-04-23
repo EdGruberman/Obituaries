@@ -1,11 +1,13 @@
-damage-causes: # 1 = Victim Display Name, 2 = Source
-  BLOCK_EXPLOSION: '{0} blew up in {1}'
+format-code: §
+deaths: # 0 = Victim, 1 = Killer
+  BLOCK_EXPLOSION: '{0} blew up from {1} exploding'
   CONTACT: '{0} died from touching {1}'
   CUSTOM: '{0} died'
   DROWNING: '{0} drowned'
   ENTITY_ATTACK: '{0} was slain by {1}'
-  ENTITY_EXPLOSION: '{0} blew up with {1}'
-  FALL: '{0} hit the ground too hard after falling {1} blocks'
+  ENTITY_EXPLOSION: '{0} was blown up by {1} exploding'
+  FALL: '{0} hit the ground too hard after falling {1}'
+  FALLING_BLOCK: '{0} was squashed by {1} falling'
   FIRE: '{0} went up in flames'
   FIRE_TICK: '{0} burned to death after being lit by {1}'
   LAVA: '{0} tried to swim in lava'
@@ -16,27 +18,43 @@ damage-causes: # 1 = Victim Display Name, 2 = Source
   STARVATION: '{0} starved to death'
   SUFFOCATION: '{0} suffocated in {1}'
   SUICIDE: '{0} committed suicide'
-  VOID: '{0} fell out of the world'
-item:
-  format: '{0} with {1}' # 1 = Entity Display Name, 2 = Item
+  THORNS: '{0} was killed trying to hurt {1}'
+  VOID: '{0} fell out of the world {1}'
+  WITHER: '{0} withered away'
+accomplices:
+  format: '{0} whilst fighting {1}' # 0 = Formatted Death Message, 1 = Accomplice List
+  list:
+    delimiter: ', '
+weapon:
+  format: '{0} using {1}' # 1 = Wielder, 2 = Weapon
+  custom: '"{0}"'
   defaults:
     PLAYER: 'a bare fist'
 potion:
-  base: '{0} of {1}' # 1 = Potion Type, 2 = Effect
-  level: '{0} {1}' # 1 = Formatted Base, 2 = Level
-  extended: '{0} (extended)' # 1 = Formatted Base
-  thrown: '{1} throwing {0}' # 1 = Formatted Base, 2 = Thrower Name
-  drunk: 'drinking a potion{0}' # 1 = Formatted Base
+  base: '{0} of {1}' # 0 = Bottle Name, 1 = Effect
+  levels:
+    format: '{0} {1}' # 0 = Formatted Base, 1 = Level
+    1: ''
+    2: 'II'
+  extended: '{0} (extended)' # 0 = Formatted Base
+  thrown: '{1} throwing {0}' # 0 = Formatted Base, 1 = Thrower Name
+  drunk: 'drinking a potion{0}' # 0 = Formatted Base
   types:
-    INSTANT_DAMAGE: harming
+    INSTANT_DAMAGE: Harming
 effects:
-    HARM: harming
-enchanted: '{0} that is enchanted' # 1 = Material
+    HARM: Harming
+fall:
+  distance: '{0,number,#} blocks' # 0 = Distance Fallen
+  pushed: '{0} from being pushed by {1}' # 0 = Distance, 1 = Pusher
+explosion: # 0 = Material, 1 = Source
+  '(default)': '{0}'
+  PRIMED_TNT: '{0} lit by {1}'
+enchanted: '{0} that is enchanted' # 0 = Material
 owners:
   Projectile: '{1} with {0}'
   Tameable: '{0} tamed by {1}'
   Vehicle: '{0} ridden by {1}'
-entity-types:
+entities:
   CHICKEN: a chicken
   COW: a cow
   CREEPER: a creeper
@@ -70,10 +88,14 @@ entity-types:
   ENDER_DRAGON: an ender dragon
   VILLAGER: a villager
   MUSHROOM_COW: a mooshroom
-  SPLASH_POTION: a splash potion
+  SPLASH_POTION: a Splash Potion
   SMALL_FIREBALL: a small fireball
   ENDER_CRYSTAL: an ender crystal
   IRON_GOLEM: an iron golem
+  WITHER: a wither
+  WITHER_SKULL: a wither skull
+  SKELETON_WITHER: a wither skeleton
+  SKELETON_NORMAL: a skeleton
   CREEPER_POWERED: an electrified creeper
   MINECART_STORAGE: a storage minecart
   MINECART_POWERED: a powered minecart
@@ -83,6 +105,12 @@ entity-types:
   MAGMA_CUBE_TINY: a tiny magma cube
   MAGMA_CUBE_SMALL: a small magma cube
   MAGMA_CUBE_BIG: a big magma cube
+  MINECART_HOPPER: a minecart with a hopper
+  MINECART_POWERED: a minecart with a furnace
+  MINECART_EXPLOSIVE: a minecart with TNT
+  MINECART_RIDEABLE: a minecart
+  MINECART_SPAWNER: a minecart with a spawner
+  MINECART_STORAGE: a minecart with a chest
 materials:
   AIR: air
   STONE: stone
@@ -101,8 +129,6 @@ materials:
   GOLD_ORE: gold ore
   IRON_ORE: iron ore
   COAL_ORE: coal ore
-  LOG: wood
-  LEAVES: leaves
   SPONGE: a sponge
   GLASS: glass
   LAPIS_ORE: lapis lazuli ore
@@ -115,11 +141,9 @@ materials:
   DETECTOR_RAIL: a detector rail
   PISTON_STICKY_BASE: a piston sticky base 
   WEB: a web
-  LONG_GRASS: dead grass
   DEAD_BUSH: a dead shrub
   PISTON_BASE: a piston base
   PISTON_EXTENSION: a piston extension
-  WOOL: wool
   PISTON_MOVING_PIECE: a piston moving piece 
   YELLOW_FLOWER: a yellow flower
   RED_ROSE: a red rose
@@ -347,115 +371,123 @@ materials:
   RECORD_11: a broken disc
   FIREBALL: a fire charge
   EXP_BOTTLE: a bottle o' enchanting
-  'SAPLING:0': an oak sapling
-  'SAPLING:1': a spruce sapling
-  'SAPLING:2': a birch sapling
-  'LOG:0': oak wood
-  'LOG:1': spruce wood
-  'LOG:2': birch wood
-  'LEAVES:0': oak leaves
-  'LEAVES:1': spruce leaves
-  'LEAVES:2': birch leaves
-  'LONG_GRASS:0': dead grass
-  'LONG_GRASS:1': tall grass
-  'LONG_GRASS:2': a live shrub
-  'WOOL:0': white wool
-  'WOOL:1': orange wool
-  'WOOL:2': magenta wool
-  'WOOL:3': light blue wool
-  'WOOL:4': yellow wool
-  'WOOL:5': light green wool
-  'WOOL:6': pink wool
-  'WOOL:7': gray wool
-  'WOOL:8': light gray wool
-  'WOOL:9': cyan wool
-  'WOOL:10': purple wool
-  'WOOL:11': blue wool
-  'WOOL:12': brown wool
-  'WOOL:13': dark green wool
-  'WOOL:14': red wool
-  'WOOL:15': black wool
-  'DOUBLE_STEP:0': a double stone slab
-  'DOUBLE_STEP:1': a double sandstone slab
-  'DOUBLE_STEP:2': a double wooden slab
-  'DOUBLE_STEP:3': a double cobblestone slab
-  'STEP:0': a stone slab
-  'STEP:1': a sandstone slab
-  'STEP:2': a wooden slab
-  'STEP:3': a cobblestone slab
-  'COAL:0': coal
-  'COAL:1': charcoal
-  'SMOOTH_BRICK:0': stone brick
-  'SMOOTH_BRICK:1': mossy stone brick
-  'SMOOTH_BRICK:2': cracked stone brick
-  'INK_SACK:0': an ink sac
-  'INK_SACK:1': rose red
-  'INK_SACK:2': cactus green
-  'INK_SACK:3': cocoa beans
-  'INK_SACK:4': lapis lazuli dye
-  'INK_SACK:5': purple dye
-  'INK_SACK:6': cyan dye
-  'INK_SACK:7': light gray dye
-  'INK_SACK:8': gray dye
-  'INK_SACK:9': pink dye
-  'INK_SACK:10': lime dye
-  'INK_SACK:11': dandelion yellow
-  'INK_SACK:12': light blue dye
-  'INK_SACK:13': magenta dye
-  'INK_SACK:14': orange dye
-  'INK_SACK:15': bone meal
-  'MONSTER_EGGS:0': a silverfish stone egg block
-  'MONSTER_EGGS:1': a silverfish cobblestone egg block
-  'MONSTER_EGGS:2': a silverfish brick egg block
-  'POTION:16388': a Splash Potion of Poison
-  'POTION:16452': a Splash Potion of Poison (extended)
-  'POTION:16420': a Splash Potion of Poison II
-  'POTION:16392': a Splash Potion of Weakness
-  'POTION:16456': a Splash Potion of Weakness (extended)
-  'POTION:16394': a Splash Potion of Slowness
-  'POTION:16458': a Splash Potion of Slowness (extended)
-  'POTION:16396': a Splash Potion of Harming
-  'POTION:16428': a Splash Potion of Harming II
-  'POTION:16385': a Splash Potion of Regeneration
-  'POTION:16449': a Splash Potion of Regeneration (extended)
-  'POTION:16417': a Splash Potion of Regeneration II
-  'POTION:16386': a Splash Potion of Swiftness
-  'POTION:16450': a Splash Potion of Swiftness (extended)
-  'POTION:16418': a Splash Potion of Swiftness II
-  'POTION:16387': a Splash Potion of Fire Resistance
-  'POTION:16451': a Splash Potion of Fire Resistance (extended)
-  'POTION:16389': a Splash Potion of Healing
-  'POTION:16421': a Splash Potion of Healing II
-  'POTION:16393': a Splash Potion of Strength
-  'POTION:16457': a Splash Potion of Strength
-  'POTION:16425': a Splash Potion of Strength II
-  'POTION:16384': a Splash Mundane Potion
-  'POTION:8196': a Potion of Poison
-  'POTION:8260': a Potion of Poison (extended)
-  'POTION:8228': a Potion of Poison II
-  'POTION:8200': a Potion of Weakness
-  'POTION:8264': a Potion of Weakness (extended)
-  'POTION:8202': a Potion of Slowness
-  'POTION:8266': a Potion of Slowness (extended)
-  'POTION:8204': a Potion of Harming
-  'POTION:8236': a Potion of Harming II
-  'POTION:8193': a Potion of Regeneration
-  'POTION:8257': a Potion of Regeneration (extended)
-  'POTION:8225': a Potion of Regeneration II
-  'POTION:8194': a Potion of Swiftness
-  'POTION:8258': a Potion of Swiftness (extended)
-  'POTION:8226': a Potion of Swiftness II
-  'POTION:8195': a Potion of Fire Resistance
-  'POTION:8259': a Potion of Fire Resistance (extended)
-  'POTION:8197': a Potion of Healing
-  'POTION:8229': a Potion of Healing II
-  'POTION:8201': a Potion of Strength
-  'POTION:8265': a Potion of Strength
-  'POTION:8233': a Potion of Strength II
-  'POTION:0': a water bottle
-  'POTION:16': an awkward potion
-  'POTION:32': a thick potion
-  'POTION:64': a mundane potion (extended)
-  'POTION:8192': a mundane potion
+  ANVIL: an anvil
+  'ANVIL/0': an anvil
+  'ANVIL/1': a slightly damaged anvil
+  'ANVIL/2': a very damaged anvil
+  'SAPLING/0': an oak sapling
+  'SAPLING/1': a spruce sapling
+  'SAPLING/2': a birch sapling
+  LOG: wood
+  'LOG/0': oak wood
+  'LOG/1': spruce wood
+  'LOG/2': birch wood
+  LEAVES: leaves
+  'LEAVES/0': oak leaves
+  'LEAVES/1': spruce leaves
+  'LEAVES/2': birch leaves
+  LONG_GRASS: dead grass
+  'LONG_GRASS/0': dead grass
+  'LONG_GRASS/1': tall grass
+  'LONG_GRASS/2': a live shrub
+  WOOL: wool
+  'WOOL/0': white wool
+  'WOOL/1': orange wool
+  'WOOL/2': magenta wool
+  'WOOL/3': light blue wool
+  'WOOL/4': yellow wool
+  'WOOL/5': light green wool
+  'WOOL/6': pink wool
+  'WOOL/7': gray wool
+  'WOOL/8': light gray wool
+  'WOOL/9': cyan wool
+  'WOOL/10': purple wool
+  'WOOL/11': blue wool
+  'WOOL/12': brown wool
+  'WOOL/13': dark green wool
+  'WOOL/14': red wool
+  'WOOL/15': black wool
+  'DOUBLE_STEP/0': a double stone slab
+  'DOUBLE_STEP/1': a double sandstone slab
+  'DOUBLE_STEP/2': a double wooden slab
+  'DOUBLE_STEP/3': a double cobblestone slab
+  'STEP/0': a stone slab
+  'STEP/1': a sandstone slab
+  'STEP/2': a wooden slab
+  'STEP/3': a cobblestone slab
+  'COAL/0': coal
+  'COAL/1': charcoal
+  'SMOOTH_BRICK/0': stone brick
+  'SMOOTH_BRICK/1': mossy stone brick
+  'SMOOTH_BRICK/2': cracked stone brick
+  'INK_SACK/0': an ink sac
+  'INK_SACK/1': rose red
+  'INK_SACK/2': cactus green
+  'INK_SACK/3': cocoa beans
+  'INK_SACK/4': lapis lazuli dye
+  'INK_SACK/5': purple dye
+  'INK_SACK/6': cyan dye
+  'INK_SACK/7': light gray dye
+  'INK_SACK/8': gray dye
+  'INK_SACK/9': pink dye
+  'INK_SACK/10': lime dye
+  'INK_SACK/11': dandelion yellow
+  'INK_SACK/12': light blue dye
+  'INK_SACK/13': magenta dye
+  'INK_SACK/14': orange dye
+  'INK_SACK/15': bone meal
+  'MONSTER_EGGS/0': a silverfish stone egg block
+  'MONSTER_EGGS/1': a silverfish cobblestone egg block
+  'MONSTER_EGGS/2': a silverfish brick egg block
+  'POTION/16388': a Splash Potion of Poison
+  'POTION/16452': a Splash Potion of Poison (extended)
+  'POTION/16420': a Splash Potion of Poison II
+  'POTION/16392': a Splash Potion of Weakness
+  'POTION/16456': a Splash Potion of Weakness (extended)
+  'POTION/16394': a Splash Potion of Slowness
+  'POTION/16458': a Splash Potion of Slowness (extended)
+  'POTION/16396': a Splash Potion of Harming
+  'POTION/16428': a Splash Potion of Harming II
+  'POTION/16385': a Splash Potion of Regeneration
+  'POTION/16449': a Splash Potion of Regeneration (extended)
+  'POTION/16417': a Splash Potion of Regeneration II
+  'POTION/16386': a Splash Potion of Swiftness
+  'POTION/16450': a Splash Potion of Swiftness (extended)
+  'POTION/16418': a Splash Potion of Swiftness II
+  'POTION/16387': a Splash Potion of Fire Resistance
+  'POTION/16451': a Splash Potion of Fire Resistance (extended)
+  'POTION/16389': a Splash Potion of Healing
+  'POTION/16421': a Splash Potion of Healing II
+  'POTION/16393': a Splash Potion of Strength
+  'POTION/16457': a Splash Potion of Strength
+  'POTION/16425': a Splash Potion of Strength II
+  'POTION/16384': a Splash Mundane Potion
+  'POTION/8196': a Potion of Poison
+  'POTION/8260': a Potion of Poison (extended)
+  'POTION/8228': a Potion of Poison II
+  'POTION/8200': a Potion of Weakness
+  'POTION/8264': a Potion of Weakness (extended)
+  'POTION/8202': a Potion of Slowness
+  'POTION/8266': a Potion of Slowness (extended)
+  'POTION/8204': a Potion of Harming
+  'POTION/8236': a Potion of Harming II
+  'POTION/8193': a Potion of Regeneration
+  'POTION/8257': a Potion of Regeneration (extended)
+  'POTION/8225': a Potion of Regeneration II
+  'POTION/8194': a Potion of Swiftness
+  'POTION/8258': a Potion of Swiftness (extended)
+  'POTION/8226': a Potion of Swiftness II
+  'POTION/8195': a Potion of Fire Resistance
+  'POTION/8259': a Potion of Fire Resistance (extended)
+  'POTION/8197': a Potion of Healing
+  'POTION/8229': a Potion of Healing II
+  'POTION/8201': a Potion of Strength
+  'POTION/8265': a Potion of Strength
+  'POTION/8233': a Potion of Strength II
+  'POTION/0': a water bottle
+  'POTION/16': an awkward potion
+  'POTION/32': a thick potion
+  'POTION/64': a mundane potion (extended)
+  'POTION/8192': a mundane potion
 reload: '§f-> §2Reloaded §7{1} plugin' # 0 = Generated, 1 = Plugin Name
 version: @VERSION@
