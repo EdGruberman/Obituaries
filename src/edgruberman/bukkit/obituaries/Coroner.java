@@ -118,10 +118,12 @@ public class Coroner implements Listener {
             final Block combuster = combustByBlock.getCombuster();
 
             if (combuster == null) {
+                this.combuster = null;
                 this.combusterAsKiller = Translator.describeMaterial(Material.LAVA);
                 return;
             }
 
+            this.combuster = combuster.getState();
             this.combusterAsKiller = Translator.describeMaterial(combuster);
             return;
         }
