@@ -51,7 +51,7 @@ public class Translator {
         return Translator.describeMaterial(item.getType().name(), item.getDurability());
     }
 
-    public static String formatPotion(final String material, final Potion potion) {
+    public static String formatPotionItem(final String material, final Potion potion) {
         String effect = null;
         if (potion.getType() != null) {
             effect = Main.courier.format("potion.types." + potion.getType().name());
@@ -73,7 +73,7 @@ public class Translator {
         String formatted = Translator.describeMaterial(item);
 
         if (item.getType() == Material.POTION && item.getDurability() != PotionType.WATER.getDamageValue())
-            formatted = Translator.formatPotion(formatted, Potion.fromItemStack(item));
+            formatted = Translator.formatPotionItem(formatted, Potion.fromItemStack(item));
 
         // TODO enumerate enchantments
         if (item.getEnchantments().size() > 0)
@@ -121,7 +121,7 @@ public class Translator {
         final JoinList<String> effects = new JoinList<String>();
         for (final PotionEffect effect : thrown.getEffects()) {
             String pe = Main.courier.format("effects." + effect.getType().getName());
-            pe = Main.courier.format("potion.levels.format", pe, Main.courier.format("potion.levels." + (effect.getAmplifier() + 1)));
+            pe = Main.courier.format("potion.levels.format", pe, Main.courier.format("potion.levels.level-" + (effect.getAmplifier() + 1)));
             effects.add(( pe != null ? pe : effect.getType().getName() ));
         }
         final String potion = Main.courier.format("potion.base", type, effects);

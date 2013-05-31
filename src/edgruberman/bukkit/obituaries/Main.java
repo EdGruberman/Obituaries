@@ -25,7 +25,7 @@ public final class Main extends CustomPlugin implements Listener {
     @Override
     public void onLoad() {
         this.putConfigMinimum("3.0.0b0");
-        this.putConfigMinimum("en_US.yml", "3.0.0b0");
+        this.putConfigMinimum("en_US.yml", "3.0.0b7");
 
         Damage.register(DamageCause.BLOCK_EXPLOSION, BlockExplosion.class);
         Damage.register(DamageCause.CONTACT, Accident.class);

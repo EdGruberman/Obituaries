@@ -34,9 +34,9 @@ weapon:
 potion:
   base: '{0} of {1}' # 0 = Bottle Name, 1 = Effect
   levels:
-    format: '{0} {1}' # 0 = Formatted Base, 1 = Level
-    1: ''
-    2: 'II'
+    format: '{0}{1}' # 0 = Formatted Base, 1 = Level
+    level-1: ' '
+    level-2: ' II'
   extended: '{0} (extended)' # 0 = Formatted Base
   thrown: '{1} throwing {0}' # 0 = Formatted Base, 1 = Thrower Name
   drunk: 'drinking a potion{0}' # 0 = Formatted Base
@@ -93,6 +93,7 @@ entities:
   SMALL_FIREBALL: a small fireball
   ENDER_CRYSTAL: an ender crystal
   IRON_GOLEM: an iron golem
+  WITCH: a witch
   WITHER: a wither
   WITHER_SKULL: a wither skull
   SKELETON_WITHER: a wither skeleton
