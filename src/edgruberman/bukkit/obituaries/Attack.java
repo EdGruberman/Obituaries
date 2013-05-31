@@ -74,7 +74,8 @@ public class Attack extends Damage {
     public UUID getDamager() {
         if (this.damager instanceof Projectile) {
             final Projectile projectile = (Projectile) this.damager;
-            return projectile.getShooter().getUniqueId();
+            final LivingEntity shooter = projectile.getShooter();
+            return ( shooter != null ? shooter.getUniqueId() : null );
         }
 
         return ( this.damager != null ? this.damager.getUniqueId() : null );
