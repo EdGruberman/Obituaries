@@ -96,7 +96,7 @@ public class Coroner implements Listener {
 
             if (combuster instanceof Projectile) {
                 final LivingEntity shooter = ((Projectile) combuster).getShooter();
-                this.combuster = shooter.getUniqueId();
+                this.combuster = ( shooter != null ? shooter.getUniqueId() : null );
             } else {
                 this.combuster = combuster.getUniqueId();
             }
@@ -127,7 +127,8 @@ public class Coroner implements Listener {
         }
 
         // simple EntityCombustEvent for fire or lava
-        this.combusterAsKiller = Translator.describeMaterial(Coroner.combustionSource(combustion.getEntity()));
+        final Material source = Coroner.combustionSource(combustion.getEntity());
+        this.combusterAsKiller = ( source != null ? Translator.describeMaterial(source) : null );
     }
 
     /** @return first combustion source found within vanilla logic of determination */
