@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,13 +49,10 @@ public class Coroner implements Listener {
         this.playerId = player.getUniqueId();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true) // give everything else a chance to finalize what really happened
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDamaged(final EntityDamageEvent event) {
         if (!(event.getEntity().getUniqueId().equals(this.playerId))) return;
         if (event.getEntity().isDead()) return;
-
-        final Player player = (Player) event.getEntity();
-        if (player.getGameMode() == GameMode.CREATIVE) return;
 
         // TODO submit ticket and fix why ENTITY_ATTACK is thrown right after ENTITY&&BLOCK_EXPLOSION
         if (event.getCause() == DamageCause.ENTITY_ATTACK) {
@@ -162,7 +158,7 @@ public class Coroner implements Listener {
         if (!death.getEntity().getUniqueId().equals(this.playerId)) return;
         final String message = this.getLastDamage().formatDeath();
 
-        // forcibly clear old combat
+        // forcibly clear old combat to avoid stale references lingering
         this.damages.clear();
         this.combusterAsKiller = null;
 
@@ -177,6 +173,7 @@ public class Coroner implements Listener {
         HandlerList.unregisterAll(this);
     }
 
+    /** clear all damages if last damage recorded is older */
     private void clearOldCombat() {
         if (this.damages.isEmpty()) return;
 
